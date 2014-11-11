@@ -3,15 +3,29 @@ class pc:
 
     def __init__(self, flist, fsymbol = function("f",x)):
 
-        self.flist = flist
+        self.flist = [[e[0],SR(e[1])] for e in flist]
         self.fsymbol = fsymbol
         self.fvar = [fvar for fvar in fsymbol.args() if fvar != n][0]
 
     def _latex_(self):
         return latex(self.fsymbol)
+    
+    def split_flist(self, x0 = 0, side = 1):
+        old_fl = list(self.flist)
+        left_fl = []
+        right_fl=[]
+        for e in old_fl:
+            if e[0][1] <= x0:
+                left_fl.append(e)
+            elif e[0][0] < x0:
+                left_fl.append([[e[0][0],x0],e[1]])
+                right_fl.append([[x0,e[0][1]],e[1]])
+            else:
+                right_fl.append(e)
+        return [pc(left_fl),pc(right_fl)][side]
 
-    def optimize_flist(self):
-        old_fl = list(self.flist_init)
+    def optimized_flist(self):
+        old_fl = list(self.flist)
         new_fl = []
         c1 = old_fl.pop(0)
         while not old_fl == []:
@@ -22,9 +36,16 @@ class pc:
                 new_fl.append(c1)
                 c1 = c2
         new_fl.append(c1)
-
-        self.flist = list(new_fl)
-        return self.flist
+        return pc(new_fl)
+    
+    def translate(self, delta):
+        return pc([[[e[0][0]+delta,e[0][1]+delta],e[1].substitute(self.fvar == self.fvar-delta)] for e in self.flist])
+    
+    def periods(self, n_periods, centered = true):
+        f = pc(reduce(lambda x,y: x+y, [self.translate(k*2*self.L()).flist for k in range(n_periods)]))
+        if centered:
+            f = f.translate(-(n_periods-1)*self.L())
+        return f
 
     def L(self):
         return self.flist[-1][0][1]
@@ -70,24 +91,13 @@ class pc:
             say += "$ <br> $=" + latex(mult) + r"\left(" + reduce(lambda x,y: x + "+" + y, [r"\left[{}\right]_{}^{}".format(latex(c[1]),blatex(c[0][0]),blatex(c[0][1])) for c in [[c[0],(integrate(c[1],self.fvar)-self.fvar+self.fvar).full_simplify().expand()] for c in fl_comp]]) + r"\right)"
             return say + r"$ <br> $={}$ <br>".format(latex((sum([integrate(c[1]*mult,self.fvar,c[0][0],c[0][1]) for c in fl_comp])-self.fvar+self.fvar).full_simplify().expand().subs_expr(sin(n*pi) == 0)))
 
-    def odd_ext(self, n_periods = 1, s = 0):
-
-        new_fl = list(self.flist)
-        mirror = [[(-c[0][1],-c[0][0]),(-1)*(c[1]-self.fvar+self.fvar).subs(self.fvar==-self.fvar)] for c in new_fl]
+    def extension(self, s = 0):
+        split_fl = self.split_flist().flist
+        mirror = [[(-c[0][1],-c[0][0]),(-1)^s*(c[1]).subs(self.fvar==-self.fvar)] for c in split_fl]
         mirror.reverse()
-        new_fl = mirror + new_fl
+        new_fl = mirror + split_fl
 
-        step = new_fl[0][0][1] - new_fl[0][0][0]
-
-        l = len(new_fl);
-        for i in range(1, n_periods):
-            for j in range(0,l):
-                c = new_fl[j]
-                new_fl.append([(c[0][0]+i*l*step,c[0][1]+i*l*step),(c[1]-self.fvar+self.fvar).subs(self.fvar==self.fvar-i*l*step)])
-
-        new_fl = [[(c[0][0]+s,c[0][1]+s),(c[1]-self.fvar+self.fvar).subs(self.fvar==self.fvar-s)] for c in new_fl]
-
-        return new_fl
+        return pc(new_fl)
 
     def fval(self, ival):
 
