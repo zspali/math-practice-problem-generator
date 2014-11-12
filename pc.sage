@@ -58,6 +58,10 @@ class pc:
 
     def cos_coeff(self, m = n):
         return 1/self.L()*(sum([integrate(c[1]*cos(m*pi*self.fvar/self.L()),self.fvar,c[0][0],c[0][1]) for c in self.flist])-self.fvar+self.fvar).full_simplify().expand().subs_expr(sin(n*pi) == 0)
+    
+    def partial_sum(self, m):
+        x = self.fvar
+        return self.cos_coeff(m=0)/2 + sum([self.cos_coeff(m=k)*cos(k*pi*x/self.L())+self.sin_coeff(m=k)*sin(k*pi*x/self.L()) for k in range(1,m+1)])
 
     def say_function(self):
 
@@ -124,6 +128,12 @@ class pc:
             say += "$a_0=$ " + self.say_integral(0,self.L(),2/self.L()) + ", <br> and for $n>0:$ "
         return say + "$a_n=$ " +pc([[c[0],c[1]*cos(n*pi*self.fvar/self.L())] for c in self.flist], fsymbol = self.fsymbol * cos(n*pi*self.fvar/self.L())).say_integral(0,self.L(),2/self.L())
 
-    def plot_function(self, color='blue', thickness=1, legend_label=""):
-
+    def plot_function(self, color='blue', thickness=1, legend_label="", default_label=true):
+        if default_label:
+            legend_label=r"${}$".format(latex(self))
         return sum([plot(c[1],(self.fvar,c[0][0],c[0][1]), color=color, thickness=thickness) for c in self.flist[:-1]]+[plot(c[1],(self.fvar,c[0][0],c[0][1]), color=color, thickness=thickness, legend_label=legend_label) for c in self.flist[-1:]])
+    
+    def plot_psum(self, m, color='red', thickness=1, legend_label="", default_label=true):
+        if default_label:
+            legend_label=r"$s_{{{}}}({})$".format(latex(m),latex(self.fvar))
+        return plot(self.partial_sum(m), (self.fvar,-self.L(),self.L()), legend_label=legend_label, color=color, thickness=thickness)
