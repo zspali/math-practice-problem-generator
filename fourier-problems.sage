@@ -6,6 +6,18 @@ llist = ["Random", "From Graph", "From Formula"]
 ilist = ["Random", "$[-L,L]$", "$[0,L]$"]
 rlist = ["Random", "Coefficients", "Series", "Partial Sum"]
 
+ftype = 1
+ltype = 1
+itype = 1
+rtype = 3
+
+min_m = 3
+max_m = 5
+
+max_step = 4
+max_abs = 4
+max_period = 3
+
 def generate_problem():
     global per, f, s, m, p, pname, rname, lname, fdef
 
