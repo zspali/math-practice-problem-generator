@@ -184,7 +184,7 @@ class pc:
     def plot_psum(self, m, color='red', thickness=1, legend_label="", default_label=true):
         if default_label:
             legend_label=r"$s_{{{}}}({})$".format(latex(m),latex(self.fvar))
-        return plot(self.partial_sum(m), (self.fvar,-self.L(),self.L()), legend_label=legend_label, color=color, thickness=thickness)
+        return plot(self.partial_sum(m), (self.fvar,self.flist[0][0][0],self.flist[-1][0][1]), legend_label=legend_label, color=color, thickness=thickness)
 
 def generate_pc(max_step = 2, max_abs = 4):
 
