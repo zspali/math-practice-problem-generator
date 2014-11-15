@@ -9,6 +9,9 @@ rlist = ["Random", "Coefficients", "Series", "Partial Sum"]
 def generate_problem():
     global per, f, s, m, p, pname, rname, lname, fdef
 
+    m = randint(min_m,max_m)
+    p = (itype-1)*randint(1,2)
+    
     pname = ["", "sine","cosine"][p]
     rname = ["Fourier {} coefficients".format(pname), "Fourier {} series".format(pname), "partial sum $s_{{{}}}(x)$ of the Fourier {} series".format(latex(m),pname)][rtype-1]
     lname = ["piecewise linear",""][ftype-1]
@@ -38,8 +41,6 @@ def generate_problem():
     if ftype == 1 and ltype == 1:
         fdef = "with graph"
 
-    m = randint(min_m,max_m)
-    p = (itype-1)*randint(1,2)
     if itype == 2:
         s = p
 
