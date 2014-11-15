@@ -1,4 +1,4 @@
-load('pc.sage')
+load('https://github.com/zspali/math-practice-problem-generator/raw/master/pc.sage')
 
 var('a0,a_n,b_n')
 
