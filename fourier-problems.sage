@@ -30,10 +30,6 @@ def generate_problem(ftype, ltype, itype, rtype):
             s = randint(0,2)
             if s == 0:
                 f=f.translate(-f.L()/2)
-                if f.is_even():
-                    s = 2
-                elif f.is_odd():
-                    s = 1
             else:
                 f=f.extension(s=s)
             if ltype == 1:
@@ -41,6 +37,11 @@ def generate_problem(ftype, ltype, itype, rtype):
                 f=f.periods(per)
             else:
                 per = 1
+
+            if f.is_even():
+                s = 2
+            elif f.is_odd():
+                s = 1
     if ftype == 2:
             s=0
             per = 1
@@ -72,6 +73,7 @@ def say_solution(ftype, ltype, itype, rtype):
     
     if itype == 1:
         f=f.slice((-f.L())*(1-min(s,1))/per,f.L()/per)
+        per = 1
         say = "we can let $L={}$. <br>".format(latex(f.L()))
         if per > 1:
             say = "Since ${}$ has period ${}$, ".format(latex(f), latex(2*f.L())) + say
