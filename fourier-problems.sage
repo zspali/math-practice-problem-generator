@@ -1,16 +1,4 @@
 
-var('a0,a_n,b_n')
-
-flist = ["Random", "Piecewise Linear", "Other"]
-llist = ["Random", "From Graph", "From Formula"]
-ilist = ["Random", "$[-L,L]$", "$[0,L]$"]
-rlist = ["Random", "Coefficients", "Series", "Partial Sum"]
-
-ftype = 1
-ltype = 1
-itype = 1
-rtype = 3
-
 min_m = 3
 max_m = 5
 
@@ -18,7 +6,15 @@ max_step = 4
 max_abs = 4
 max_period = 3
 
-def generate_problem():
+var('a0,a_n,b_n')
+min_m = 3
+max_m = 5
+
+max_step = 4
+max_abs = 4
+max_period = 3
+
+def generate_problem(ftype, ltype, itype, rtype):
     global per, f, s, m, p, pname, rname, lname, fdef
 
     m = randint(min_m,max_m)
@@ -43,10 +39,16 @@ def generate_problem():
             per = randint(1,max_period)
             f=f.periods(per)
     if ftype == 2:
-            L = randint(1,max_step)
-            fun = choice([randint(1,max_abs)*(-1)^randint(0,1)*x^2,cos(per*pi*x/L),sin(per*pi*x/L),exp(per*pi*x/L)])
-            f = pc([[[(-L)*(2-itype),L],fun]])
+            s=0
             per = 1
+            L = randint(1,max_step)
+            fun = choice([randint(1,max_abs)*(-1)^randint(0,1)*x^2,exp(per*pi*x/L)])
+            f = pc([[[(-L)*(2-itype),L],fun]])
+            if f.is_even():
+                s = 2
+            elif f.is_odd():
+                s = 1
+            
 
     if ftype == 2 or ltype == 2:
         fdef = "with formula {}".format(f.say_function())
@@ -56,22 +58,23 @@ def generate_problem():
     if itype == 2:
         s = p
 
-def say_problem():
+def say_problem(ftype, ltype, itype, rtype):
     html("Compute the {} of the {} function {} <br>".format(rname,lname,fdef))
     if ftype == 1 and ltype == 1:
         f.plot_function(thickness=2).show()
         html("<br>")
 
-def say_solution():
+def say_solution(ftype, ltype, itype, rtype):
     global f
-    print s
     
     if itype == 1:
         f=f.slice((-f.L())*(1-min(s,1))/per,f.L()/per)
         say = "we can let $L={}$. <br>".format(latex(f.L()))
         if per > 1:
-            say = "Since ${}$ has period {}, ".format(latex(f), latex(2*f.L())) + say
+            say = "Since ${}$ has period ${}$, ".format(latex(f), latex(2*f.L())) + say
         html(say[0].upper()+say[1:])
+    else:
+        html("We can let $L={}$. <br>".format(latex(f.L())))
     
     cosf = cos(n*pi*x/f.L())
     sinf = sin(n*pi*x/f.L())
@@ -93,6 +96,8 @@ def say_solution():
         html("The formula for ${}$ is {}".format(latex(f),f.say_function()))
         
     html("The Fourier {} coefficients are: <br>".format(pname))
+    if s > 0:
+        f = f.slice(0,f.L())
     if s == 1 and rtype != 2 and itype == 1:
         html(r"Since ${}$ is odd, we have $$a_n=0,\quad n\ge0$$".format(latex(f)))
     if s != 1:
