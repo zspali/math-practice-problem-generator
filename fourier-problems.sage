@@ -69,7 +69,7 @@ def say_problem(ftype, ltype, itype, rtype):
         html("<br>")
 
 def say_solution(ftype, ltype, itype, rtype):
-    global f
+    global f, per
     
     if itype == 1:
         f=f.slice((-f.L())*(1-min(s,1))/per,f.L()/per)
