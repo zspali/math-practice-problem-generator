@@ -36,8 +36,11 @@ def generate_problem(ftype, ltype, itype, rtype):
                     s = 1
             else:
                 f=f.extension(s=s)
-            per = randint(1,max_period)
-            f=f.periods(per)
+            if ltype == 1:
+                per = randint(1,max_period)
+                f=f.periods(per)
+            else:
+                per = 1
     if ftype == 2:
             s=0
             per = 1
