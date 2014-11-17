@@ -512,8 +512,10 @@ class IHDE2d(HDE2d):
     
     def say_yi(self, i=0):
         t = self.t
-        hj = [SR(self.h()[i])(t=s),SR(self.h()[i]+self.y()[1-i])(t=s)][SR(bool(i == 0 and self.is_defective()))]
-        return r"$$y_{{{j}}}({t})=e^{{r_{{{j}}}{t}}}\int_{{{t0}}}^{{{t}}}e^{{-r_{{{j}}}s}}\left({hj}\right)\,\mathrm ds={yj}$$".format(j=latex(i+1), t=latex(self.t), t0=latex(self.t0), hj=latex(hj), yj=latex(self.y()[i]))
+        hjf = [r"h_{{{i}}}(s)".format(i=latex(i+1)),r"h_{{{i}}}(s)+y_2(s)".format(i=latex(i+1))][SR(bool(i == 0 and self.is_defective()))]
+        erj = [r"e^{{{rjs}}}".format(rjs=latex(self.evals()[i]*s)),""][SR(bool(self.evals()[i] == 0))]
+        ehj = exp(self.evals()[i]*s)*[SR(self.h()[i])(t=s),SR(self.h()[i]+self.y()[1-i])(t=s)][SR(bool(i == 0 and self.is_defective()))]
+        return r"$$y_{{{j}}}({t})=e^{{r_{{{j}}}{t}}}\int_{{{t0}}}^{{{t}}}e^{{-r_{{{j}}}s}}\left({hjf}\right)\,\mathrm ds={erj}\int_{{{t0}}}^{{{t}}}{ehj}\,\mathrm ds={yj}$$".format(erj=erj,ehj=latex(ehj), hjf=hjf, j=latex(i+1), t=latex(self.t), t0=latex(self.t0), yj=latex(self.y()[i]))
     
     def say_y(self):
         say = self.say_evals() + self.say_T() + r"Letting $\mathbf x({0})=T\mathbf y({0})$, the system gets transformed to $\mathbf y'({0})=J\mathbf y({0})+\mathbf h({0})$, where $J$ is the Jordan form: <br> {1} and {2} <br> Now we can get a particular solution with transformed coordinates".format(latex(self.t),self.say_J(),self.say_h())
