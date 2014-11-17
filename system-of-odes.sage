@@ -1,5 +1,5 @@
 R.<a>=QQ[]
-var('alpha,t,u,x,y,x1,x2');x1f=function('x1f',t); x2f=function('x2f',t)
+var('alpha,t,u,x,y,x1,x2,c1,c2,y1,y2,s');x1f=function('x1f',t); x2f=function('x2f',t); cv = vector([c1,c2]); yx = vector([y1,y2])
   
 def generate_trafo(max_abs = 8):
     T = [[1,0],[0,1]]
@@ -71,7 +71,22 @@ def sol_row(B):
         else:
             evect = vector([-row[1], row[0]])
         return evect, rowin
+    
+def simplify_v(v, expr = None):
+    if expr != None:
+        return vector([SR(c).simplify().subs_expr(expr).expand() for c in v])
+    else:
+        return vector([SR(c).simplify().expand() for c in v])
 
+def simplify_mx(A, expr = None):
+    if expr != None:
+        return matrix([[SR(c).simplify().subs_expr(expr).expand() for c in r] for r in A])
+    else:
+        return matrix([[SR(c).simplify().expand() for c in r] for r in A])
+    
+def latex_vmatrix(A):
+    return r"\begin{{vmatrix}} {} \end{{vmatrix}}".format(reduce(lambda x,y: reduce(lambda z,w: latex(z) + " & " + latex(w), x) + r" \\ " + reduce(lambda z,w: latex(z) + " & " + latex(w), y), list(A)))
+    
 class HDE2d:
     def __init__(self, A, cx_exp=False, vari=t):
         self.A = A
@@ -89,10 +104,19 @@ class HDE2d:
 
     def evals(self):
         if self.disc() == 0:
-            return [self.p()/2]
+            return [self.p()/2,self.p()/2]
         else:
-            return [self.p()/2 + (-1)^i*sqrt(self.disc())/2 for i in range(1,3)]
-        
+            if self.disc() > 0:
+                return [self.p()/2 + (-1)^i*sqrt(self.disc())/2 for i in range(1,3)]
+            else:
+                return [self.p()/2 + (-1)^i*I*sqrt(-self.disc())/2 for i in range(0,2)]
+    
+    def la(self):
+        return self.evals()[0].real()
+    
+    def mu(self):
+        return self.evals()[0].imag()
+    
     def ivects(self, cx_exp = False):
         if self.disc() > 0:
             return [sol_row(self.A-eval)[0] for eval in self.evals()]
@@ -117,6 +141,12 @@ class HDE2d:
     def T(self):
         return column_matrix(self.ivects())
     
+    def is_defective(self):
+        return bool(self.disc() == 0 and self.A-self.p()/2 != 0)
+    
+    def J(self):
+        return diagonal_matrix(self.evals())+SR(self.is_defective())*matrix([[0,1],[0,0]])
+    
     def fsols(self):
         if self.disc() > 0:
             return [e^(self.evals()[i]*self.t)*self.ivects()[i] for i in range(2)]
@@ -140,6 +170,12 @@ class HDE2d:
             
     def Phi(self):
         return column_matrix(self.fsols())
+    
+    def PhiI(self):
+        if self.disc() < 0:
+            return simplify_mx(exp(-2*self.evals()[0].real()*self.t)/self.T().det()*self.Phi().adjoint())
+        else:
+            return simplify_mx(self.Phi().I())
             
     def IC(self, b):
         c = vector(self.T() \ b)
@@ -148,8 +184,51 @@ class HDE2d:
     def say_evals(self):
         return r"Since $p=" + latex(self.p()) + ",\,q=" + latex(self.q()) + ",\,\Delta=" + latex(self.disc()) + r"$, the eigenvalues are $r_{1,2}=\frac{p\pm\sqrt\Delta}{2}=" + reduce(lambda x,y: latex(x) + ",\," + latex(y), self.evals()) + "$ <br>"
     
-    def say_ivect(self, i=0, cx_exp=False):
-        return r"Since $A-(" + latex(self.evals()[i]) +")I=" + latex(self.A - self.evals()[i]) + r"$, we can choose $\mathbf u^{(" + latex(i+1) + r")}=" + latex(column_matrix([self.ivects(cx_exp=cx_exp)[i]])) + r"$"
+    def say_ivect(self, i=0, cx_exp=False, ui=True, usym=r"\mathbf u"):
+        if ui:
+            us = r"\mathbf u^{(" + latex(i+1) + r")}"
+        else:
+            us = usym
+        return r"Since $A-(" + latex(self.evals()[i]) +")I=" + latex(self.A - self.evals()[i]) + r"$, we can choose ${}=".format(us) + latex(column_matrix([self.ivects(cx_exp=cx_exp)[i]])) + r"$"
+    
+    def say_evects(self):
+        if self.is_defective():
+            aug_mx = column_matrix((self.A - self.evals()[0]).columns() + [self.ivects()[0]])
+            aug_mx_latex = r"\left(\begin{array}{cc|c}" + reduce(lambda x,y: reduce(lambda z,w: latex(z) + " & " + latex(w), x) + r" \\ " + reduce(lambda z,w: latex(z) + " & " + latex(w), y), aug_mx) + r"\end{array}\right)"
+            return self.say_ivect(ui=False) + r"<br> and as $\left(A-\left({2}\right)I\mid\mathbf u\right)={0}$, we can choose $\mathbf v={1}$<br>".format(aug_mx_latex, latex(column_matrix([self.ivects()[1]])),latex(self.evals()[0]))
+        elif self.disc() < 0 and not self.cx_exp:
+            return self.say_ivect(i=0,cx_exp=True, ui=False) + r" $=\mathbf a+i\mathbf b=" + reduce(lambda x,y: latex(column_matrix([x]))+"+i"+latex(column_matrix([y])), self.ivects()) + r"$ <br>"
+        else:
+            return r"{}, <br> {} <br>".format(self.say_ivect(i=0,cx_exp=True),self.say_ivect(i=1,cx_exp=True))
+        
+    def evsymbols(self):
+        if self.is_defective():
+            return [r"\mathbf u",r"\mathbf v"]
+        elif self.disc() < 0 and not self.cx_exp:
+            return [r"\mathbf a", r"\mathbf b"]
+        else:
+            return [r"\mathbf u^{(1)}", r"\mathbf u^{(2)}"]
+        
+    def say_T(self):
+        return self.say_evects() + r"so we have $T=\left({}\quad {}\right)={}$ <br>".format(self.evsymbols()[0],self.evsymbols()[1],latex(self.T()))
+    
+    def say_J(self):
+        adj = [r"$\Delta\ne0$",r"$A$ is defective",r"$A$ is a scalar matrix"][(SR(bool(self.disc() == 0)))*(2-SR(self.is_defective()))]
+        return r"since {}, we have $J={}$".format(adj,latex(self.J()))
+    
+    def say_Phi(self):
+        return self.say_fsols() + r"so we have $\Phi({0})=\left(\mathbf x^{{(1)}}({0})\quad\mathbf x^{{(2)}}({0})\right)={1}$ <br>".format(latex(self.t),latex(self.Phi()))
+    
+    def say_det_Phi(self):
+        if self.disc() < 0 and not self.cx_exp:
+            et=[latex(e^(2*self.evals()[0].real()*self.t)),""][SR(bool(self.evals()[0].real() == 0))]
+            
+            return r"We have $\det\Phi({t})=e^{{2\lambda {t}}}\det T={et}{det_T}={det_Phi}$".format(t=latex(self.t), et=et, det_T=latex_vmatrix(self.T()), det_Phi=latex(self.Phi().det().full_simplify()))
+        else:
+            return r"We have $\det\Phi({t})={vPhi}={detPhi}$".format(t=latex(self.t), vPhi=latex_vmatrix(self.Phi()), detPhi=latex(self.Phi().det().full_simplify()))
+    
+    def say_PhiI(self):
+        return self.say_det_Phi() + r"<br> so $\Phi({t})^{{-1}}=\frac{{1}}{{\det\Phi({t})}}{Phia}={PhiI}$ <br>".format(t=latex(self.t), Phia=latex(simplify_mx(self.Phi().adjoint())), PhiI=latex(self.PhiI()))
     
     def say_esol(self, i=0):
         return self.say_ivect(i,cx_exp=self.cx_exp) + r", and thus $\mathbf x^{(" + latex(i+1) + r")}(" + latex(self.t) + ")=e^{r_" + latex(i+1) + latex(self.t) + r"}\mathbf u^{(" + latex(i+1) + r")}=" + latex(column_matrix([self.fsols()[i]])) + r"$. <br>"
@@ -172,7 +251,7 @@ class HDE2d:
                 aug_mx = column_matrix((self.A - self.evals()[0]).columns() + [self.ivects()[0]])
                 aug_mx_latex = r"\left(\begin{array}{cc|c}" + reduce(lambda x,y: reduce(lambda z,w: latex(z) + " & " + latex(w), x) + r" \\ " + reduce(lambda z,w: latex(z) + " & " + latex(w), y), aug_mx) + r"\end{array}\right)"
                 say = self.say_esol(0) + ", <br>"
-                say += r"and as $\left(A\mid\mathbf u^{{(1)}}\right)={0}$, we can choose $\mathbf v={1}$, thus <br>".format(aug_mx_latex, latex(column_matrix([self.ivects()[1]])))
+                say += r"and as $\left(A-\left({2}\right)I\mid\mathbf u^{{(1)}}\right)={0}$, we can choose $\mathbf v={1}$, thus <br>".format(aug_mx_latex, latex(column_matrix([self.ivects()[1]])),latex(self.evals()[0]))
                 say += r"$\mathbf x^{{(2)}}({0})=e^{{r_1 {0}}}\mathbf v+{0} e^{{r_1 {0}}}\mathbf u^{{(1)}}={1}$ <br>".format(latex(self.t), latex(column_matrix(self.fsols()[1])))
                 return say
     
@@ -194,6 +273,19 @@ class HDE2d:
 
     def say_system(self,b):
         return r"$$\begin{{aligned}} x_1'(t)&={0},\quad x_1(0)={1},\\ x_2'(t)&={2},\quad x_2(0)={3} \end{{aligned}}$$".format(latex((self.A*vector([x1,x2]))[0]),latex(b[0]),latex((self.A*vector([x1,x2]))[1]),latex(b[1]))
+    
+    def generate_g(self):
+        c = randint(1,4)*(-1)^(randint(0,1))
+        p = randint(1,4)*(-1)^(randint(0,1))
+        t = self.t
+        fl = [1,exp(p*t)]
+        if self.disc() < 0:
+            fl += [cos(self.mu()*t),sin(self.mu()*t)]
+        i = randint(0,1)
+        v=[0,0]
+        v[i] = c*choice(fl)
+        v[1-i] = 0
+        return vector(v)
 
 
 def poly_to_opens(p):
@@ -384,3 +476,54 @@ class pHDE2d:
             g = plot_vector_field(A*vector([x1,x2]),(x1,xmin,xmax),(x2,ymin,ymax))
             g += parametric_plot(sol, (t,0,10), thickness=2, legend_label=r"$x(t)$")
             show(g, xmin=xmin, xmax =xmax, ymin = ymin, ymax = ymax)
+
+
+
+class IHDE2d(HDE2d):
+    def __init__(self, A, g, cx_exp=False, vari=t, t0=0):
+        self.A = A
+        self.cx_exp = cx_exp
+        self.t = vari
+        self.g = g
+        assume(vari > 0)
+        self.t0=t0
+    
+    def du(self):
+        return vector([SR(c) for c in self.PhiI()*self.g])
+    
+    def u(self):
+        t = self.t
+        return vector([SR(integrate(SR(c)(t=s),(s,self.t0,t))) for c in (self.PhiI()*self.g)])
+    
+    def h(self):
+        return self.T().I*self.g
+    
+    def y(self):
+        t = self.t
+        if self.disc() != 0:
+            return vector([exp(self.evals()[k]*t)*SR(integrate(exp(-self.evals()[k]*s)*SR(self.h()[k])(t=s), (s,self.t0,t))).full_simplify() for k in range(2)])
+        else:
+            y2 = exp(self.evals()[1]*t)*SR(integrate(exp(-self.evals()[1]*s)*SR(self.h()[1])(t=s), (s,self.t0,t))).full_simplify()
+            y1 = exp(self.evals()[0]*t)*SR(integrate(exp(-self.evals()[0]*s)*SR(self.h()[0]+y2)(t=s), (s,self.t0,t))).full_simplify()
+            return vector([y1,y2])
+        
+    def say_h(self):
+        return r"$\mathbf h({0})=T^{{-1}}\mathbf g({0})={1}{2}={3}$".format(latex(self.t),latex(self.T().I),latex(self.g.column()),latex(self.h().column()))
+    
+    def say_yi(self, i=0):
+        hj = [self.h()[i],self.h()[i]+self.y()[1-i]][SR(bool(i == 0 and self.is_defective()))]
+        return r"$$y_{{{j}}}({t})=e^{{r_{{{j}}}{t}}}\int_{{{t0}}}^{{{t}}}e^{{-r_{{{j}}}s}}\left({hj}(s)\right)\,\mathrm ds={yj}$$".format(j=latex(i+1), t=latex(self.t), t0=latex(self.t0), hj=latex(hj), yj=latex(self.y()[i]))
+    
+    def say_y(self):
+        say = self.say_evals() + self.say_T() + r"Letting $\mathbf x({0})=T\mathbf y({0})$, the system gets transformed to $\mathbf y'({0})=J\mathbf y({0})+\mathbf h({0})$, where $J$ is the Jordan form: <br> {1} and {2} <br> Now we can get a particular solution with transformed coordinates".format(latex(self.t),self.say_J(),self.say_h())
+        i = SR(self.is_defective())
+        return say + self.say_yi(i=i) + self.say_yi(i=1-i)
+    
+    def say_u(self):
+        t = self.t
+        du = vector([SR(c)(t=s) for c in self.du()])
+        say = r"A particular solution will be $\mathbf u({t})=\int_{{{t0}}}^{{{t}}}\Phi(s)^{{-1}}\mathbf g(s)$ <br>".format(t=latex(self.t), t0=latex(self.t0))
+        say += self.say_Phi() + self.say_PhiI()
+        say += r"Therefore $\Phi(s)^{{-1}}\mathbf g(s)={du}$, and so <br>".format(du=latex(du.column()))
+        say += reduce(lambda x,y: x + y, [r"$$u_{{{i}}}({t})=\int_{{{t0}}}^{{{t}}}{dui}\,\mathrm ds={ui}$$".format(i=latex(i+1), t=latex(self.t), t0=latex(self.t0), dui=latex(du[i]), ui=latex(self.u()[i])) for i in range(2)])
+        return say
