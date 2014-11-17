@@ -525,7 +525,7 @@ class IHDE2d(HDE2d):
     def say_u(self):
         t = self.t
         du = vector([SR(c)(t=s) for c in self.du()])
-        say = r"A particular solution will be $\Phi({t})\mathbf u({t})$ where $\mathbf u({t})=\int_{{{t0}}}^{{{t}}}\Phi(s)^{{-1}}\mathbf g(s)$ <br>".format(t=latex(self.t), t0=latex(self.t0))
+        say = r"A particular solution will be $\Phi({t})\mathbf u({t})$ where $\mathbf u({t})=\int_{{{t0}}}^{{{t}}}\Phi(s)^{{-1}}\mathbf g(s)\,\mathrm ds$ <br>".format(t=latex(self.t), t0=latex(self.t0))
         say += self.say_evals()
         say += self.say_Phi() + self.say_PhiI()
         say += r"Therefore $\Phi(s)^{{-1}}\mathbf g(s)={du}$, and so <br>".format(du=latex(du.column()))
