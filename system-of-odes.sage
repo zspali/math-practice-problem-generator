@@ -240,7 +240,7 @@ class HDE2d:
             if self.cx_exp:
                 return reduce(lambda x,y: x + y, [self.say_esol(i) for i in range(2)])
             else:
-                say = self.say_ivect(0,cx_exp=True) + r" $=\mathbf a+i\mathbf b=" + reduce(lambda x,y: latex(column_matrix([x]))+"+i"+latex(column_matrix([y])), self.ivects()) + r"$, so that <br>"
+                say = self.say_ivect(0,cx_exp=True,ui=False) + r" $=\mathbf a+i\mathbf b=" + reduce(lambda x,y: latex(column_matrix([x]))+"+i"+latex(column_matrix([y])), self.ivects()) + r"$, so that <br>"
                 say += r"$\mathbf x^{{(1)}}({0})=e^{{\lambda {0}}}\left(\cos(\mu {0})\mathbf a-\sin(\mu {0})\mathbf b\right)= {1}$ and <br>".format(latex(self.t),latex(column_matrix([self.fsols()[0]])))
                 say += r"$\mathbf x^{{(2)}}({0})=e^{{\lambda {0}}}\left(\cos(\mu {0})\mathbf b+\sin(\mu {0})\mathbf a\right)={1}$. <br>".format(latex(self.t), latex(column_matrix([self.fsols()[1]])))
                 return say
@@ -522,7 +522,8 @@ class IHDE2d(HDE2d):
     def say_u(self):
         t = self.t
         du = vector([SR(c)(t=s) for c in self.du()])
-        say = r"A particular solution will be $\mathbf u({t})=\int_{{{t0}}}^{{{t}}}\Phi(s)^{{-1}}\mathbf g(s)$ <br>".format(t=latex(self.t), t0=latex(self.t0))
+        say = r"A particular solution will be $\Phi({t})\mathbf u({t})$ where $\mathbf u({t})=\int_{{{t0}}}^{{{t}}}\Phi(s)^{{-1}}\mathbf g(s)$ <br>".format(t=latex(self.t), t0=latex(self.t0))
+        say += A.say_evals()
         say += self.say_Phi() + self.say_PhiI()
         say += r"Therefore $\Phi(s)^{{-1}}\mathbf g(s)={du}$, and so <br>".format(du=latex(du.column()))
         say += reduce(lambda x,y: x + y, [r"$$u_{{{i}}}({t})=\int_{{{t0}}}^{{{t}}}{dui}\,\mathrm ds={ui}$$".format(i=latex(i+1), t=latex(self.t), t0=latex(self.t0), dui=latex(du[i]), ui=latex(self.u()[i])) for i in range(2)])
