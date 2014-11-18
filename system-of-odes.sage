@@ -513,7 +513,7 @@ class IHDE2d(HDE2d):
     def say_yi(self, i=0):
         t = self.t
         hjf = [r"h_{{{i}}}(s)".format(i=latex(i+1)),r"h_{{{i}}}(s)+y_2(s)".format(i=latex(i+1))][SR(bool(i == 0 and self.is_defective()))]
-        erj = [r"e^{{{rjs}}}".format(rjs=latex(self.evals()[i]*s)),""][SR(bool(self.evals()[i] == 0))]
+        erj = [r"e^{{{rjs}}}".format(rjs=latex(self.evals()[i]*t)),""][SR(bool(self.evals()[i] == 0))]
         ehj = exp(-self.evals()[i]*s)*[SR(self.h()[i])(t=s),SR(self.h()[i]+self.y()[1-i])(t=s)][SR(bool(i == 0 and self.is_defective()))]
         return r"$$y_{{{j}}}({t})=e^{{r_{{{j}}}{t}}}\int_{{{t0}}}^{{{t}}}e^{{-r_{{{j}}}s}}\left({hjf}\right)\,\mathrm ds={erj}\int_{{{t0}}}^{{{t}}}{ehj}\,\mathrm ds={yj}$$".format(erj=erj,ehj=latex(ehj), hjf=hjf, j=latex(i+1), t=latex(self.t), t0=latex(self.t0), yj=latex(self.y()[i]))
     
