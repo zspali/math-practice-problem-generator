@@ -500,7 +500,7 @@ class IHDE2d(HDE2d):
     
     def y(self):
         t = self.t
-        if self.disc() != 0:
+        if not self.is_defective():
             return vector([exp(self.evals()[k]*t)*SR(integrate(exp(-self.evals()[k]*s)*SR(self.h()[k])(t=s), (s,self.t0,t))).full_simplify() for k in range(2)])
         else:
             y2 = exp(self.evals()[1]*t)*SR(integrate(exp(-self.evals()[1]*s)*SR(self.h()[1])(t=s), (s,self.t0,t))).full_simplify()
