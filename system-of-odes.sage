@@ -1,5 +1,5 @@
 R.<a>=QQ[]
-var('alpha,t,u,x,y,x1,x2,c1,c2,y1,y2,s');x1f=function('x1f',t); x2f=function('x2f',t); cv = vector([c1,c2]); yx = vector([y1,y2])
+var('alpha,t,u,x,y,x1,x2,c1,c2,r,y1,y2,s');x1f=function('x1f',t); x2f=function('x2f',t); cv = vector([c1,c2]); yx = vector([y1,y2])
   
 def generate_trafo(max_abs = 8):
     T = [[1,0],[0,1]]
@@ -19,6 +19,84 @@ def randomly_conjugate(A, max_abs = 8):
 def OK_mx(A, max_abs = 8, max_denom = 2):
     return max(map(abs,A.list())) <= max_abs and lcm(map(denominator,A.list())) <= max_denom
 
+def generate_evals(max_abs = 8, evtype = 0):
+    if evtype == 0:
+        evtype = randint(1,3)
+
+    if evtype == 1:
+        evlist = range(-max_abs,max_abs+1)
+        return [evlist.pop(choice(range(len(evlist)))),evlist.pop(choice(range(len(evlist))))]
+
+    if evtype == 2:
+        ip = randint(1,max_abs)
+        mabs = floor(sqrt(max_abs^2-ip^2))
+        rp = randint(-mabs,mabs)
+        return [rp+(-1)^i*I*ip for i in range(2)]
+
+    if evtype == 3:
+        ev = randint(-max_abs,max_abs)
+        return [ev,ev]
+
+class BVP:
+    def __init__(self, evlist, bclist, X = "X", x = x):
+        self.evlist = evlist
+        self.bclist = bclist # [place, value, nder]
+        self.X = X
+        self.x = x
+        
+    def cp(self):
+        return R(SR(prod([a-r for r in self.evlist])).expand())
+    
+    def say_bc(self, i):
+        X = [self.X, self.X + "'"][self.bclist[i][2]]
+        return r"{X}({x}={x0})={X0}".format(X = X, x = latex(self.x), x0 = latex(self.bclist[i][0]), X0 = latex(self.bclist[i][1]))
+    
+    def say_ode(self):
+        return r"{X}''({x})+{a1}{X}'({x})+{a0}{X}({x})=0".format(X = self.X, x = latex(self.x), a1 = latex(self.cp().list()[1]), a0 = latex(self.cp().list()[0]))
+        
+    def say_problem(self):
+        return r"Find every solution of the BVP $${ODE},\quad {BC1},\,{BC2}$$".format(ODE=self.say_ode(), BC1 = self.say_bc(i=0), BC2 = self.say_bc(i=1))
+    
+    def disc(self):
+        return self.cp().disc()
+    
+    def la(self):
+        return self.evlist[0].real()
+    
+    def mu(self):
+        return self.evlist[0].imag()
+    
+    def fsols(self):
+        if self.disc() > 0:
+            return [exp(r*self.x) for r in self.evlist]
+        elif self.disc() < 0:
+            return [exp(self.la()*self.x)*trig for trig in [cos(self.mu()*self.x), sin(self.mu()*self.x)]]
+        else:
+            return [f*exp(self.evlist[0]*self.x) for f in [1,self.x]]
+        
+    def gensol(self):
+        return sum([cv[i]*self.fsols()[i] for i in range(2)])
+    
+    def bc(self, i):
+        x = self.x
+        return self.gensol().diff(x,self.bclist[i][2])(x=self.bclist[i][0])==self.bclist[i][1]
+    
+    def aug_mx(self):
+        return matrix([[bc.left().coeff(c1),bc.left().coeff(c2),bc.right()] for bc in [self.bc(i) for i in range(2)]])
+    
+    def say_solution(self):
+        bclist = [r"{gs}={bc}".format(gs=latex(self.bc(i).left()), bc = self.say_bc(i)) for i in range(2)]
+        ae = self.aug_mx().echelon_form()
+        say = r"The characteristic equation is $${ce},$$ which has solutions ${r}$. Therefore, a general solution is $${X}({x})={gensol}$$".format(ce = latex(SR(self.cp()).expand()(a=r) == 0), r = reduce(lambda x,y: latex(x) + r",\," + latex(y), self.evlist), gensol = latex(self.gensol()), X = self.X, x = latex(self.x))
+        say += r"Using this general solution, the BC read $${bc1}$$ $${bc2}$$ The reduced echelon form of the corresponding augmented matrix is ${ae}$".format(bc1 = bclist[0], bc2 = bclist[1], ae = latex(ae))
+        if ae[1] == vector([0,0,1]):
+            say += r"so there's no solution."
+        elif ae.rank() == 2:
+            say += r"so there's a unique solution."
+        else:
+            say += r"so there's infinitely many solutions."
+        return say
+    
 def generate_mx(max_abs = 8, evtype = 0, parametric = False, max_conj = 50):
     if evtype == 0:
         evtype = randint(1,3)
