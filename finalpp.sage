@@ -60,4 +60,4 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
                             html(problem.say_psum(m))
                                             
                     if cplot:
-                        show(problem.contour_plot(50))
+                        show(problem.plot_psum(50))
