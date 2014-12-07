@@ -1,3 +1,5 @@
+var('t')
+
 class HHE1d:
     
     def __init__(self, f, u="u", alpha2=1, bc=[0,0]):
