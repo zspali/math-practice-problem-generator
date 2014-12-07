@@ -36,8 +36,14 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
                     problem = HHE1d(f = f, bc = bc, alpha2 = alpha2)
                 else:
                     problem = NHHE1d(f = f, bc = bc, alpha2 = alpha2)
-            
-                html(r"Find the {rsel} to the problem".format(rsel = rsel))
+                    
+                if rsel == rlist[1]:
+                    html(r"Find the formal solution to the problem")
+                    
+                else:
+                    m = randint(min_m, max_m)
+                    html(r"Find the partial sum $s_{{{m}}}(t,x)$ to the problem".format(m = latex(m)))
+                    
                 html(problem.say_eqs())
                 
                 if lsel == llist[1]:
@@ -45,3 +51,13 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
                     show(f.plot_function())
                 else:
                     html("Where $f(x)$ has formula" + f.say_function())
+                    
+                @interact
+                def _f(solution = Checkbox(label = "Show Solution", default = False), cplot = Checkbox(label = "Draw Contour Plot of $s_{50}(t,x)$", default = False)):
+                    if solution:
+                        html(problem.say_fseries())
+                        if rsel == rlist[2]:
+                            html(problem.say_psum(m))
+                                            
+                    if cplot:
+                        show(problem.contour_plot(50))
