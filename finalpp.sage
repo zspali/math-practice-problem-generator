@@ -17,7 +17,7 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
         llist = ["Random", "From Graph", "From Formula"]
         
         @interact
-        def _f(bsel = Selector(plist, label = "BC type:", selector_type = "button"), rsel = Selector(plist, label = "BC type:", selector_type = "button"), lsel = Selector(plist, label = "BC type:", selector_type = "button"), regen1 = Button(text="Regenerate Problem", default=True, value=True, label = "")):
+        def _f(bsel = Selector(blist, label = "BC type:", selector_type = "button"), rsel = Selector(rlist, label = "problem type:", selector_type = "button"), lsel = Selector(llist, label = "NHBC represented by:", selector_type = "button"), regen1 = Button(text="Regenerate Problem", default=True, value=True, label = "")):
             if bsel == blist[0]:
                 bsel = choice(blist[1:])
             if rsel == rlist[0]:
@@ -42,6 +42,6 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
                 
                 if lsel == llist[1]:
                     html("Where $f(x)$ has graph<br>")
-                    f.plot_function()
+                    show(f.plot_function())
                 else:
                     html("Where $f(x)$ has formula" + f.say_function())
