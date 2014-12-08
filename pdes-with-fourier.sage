@@ -86,3 +86,68 @@ class IHE1d(HHE1d):
         say = r"We have "
         say += r"$$s_{{{m}}}(t,x)=\frac12a_0+\sum_{{n=1}}^{{{m}}} a_n{Tn}{Xn}={sm}$$".format(m = latex(m), Tn = latex(self.Tn()), Xn = latex(self.Xn()), sm = latex(self.psum(m)))
         return say
+    
+class ZVWE1d(HHE1d):
+    
+    def __init__(self, f, u="u", a=1):
+        self.u = u
+        self.f = f
+        self.a=a
+    
+    def Tn(self):
+        return cos(self.a*n*pi*t/self.f.L())
+    
+    def Xn(self):
+        return sin(n*pi*x/self.f.L())
+    
+    def say_eqs(self):
+        LHS = latex(self.a^2 * function(self.u + "_{xx}",t,x))
+        say = r"$${LHS}={u}_{{tt}}(t,x)$$ ".format(u=self.u,LHS=LHS)
+        say += r"$${u}(t,x=0)=0,\,{u}(t,x={L})=0$$ ".format(u = self.u, L=latex(self.f.L()))
+        say += r"$${u}(t=0,x)={f}$$".format(u = self.u, f = latex(self.f))
+        say += r"$${u}_t(t=0,x)=0$$".format(u = self.u)
+        return say
+    
+    def say_fseries(self):
+        say = r"We can write "
+        say += r"$${u}(t,x)=\sum_{{n=1}}^\infty b_n{Tn}{Xn},$$ ".format(u = self.u, Tn = latex(self.Tn()), Xn = latex(self.Xn()))
+        say += r"where the $b_n$ are the Fourier sine coefficients of ${f}$.<br>".format(f=latex(self.f))
+        return say + self.f.say_sin_coeff()
+    
+class ZDWE1d(HHE1d):
+    
+    def __init__(self, f, u="u", a=1):
+        self.u = u
+        self.f = f
+        self.a=a
+    
+    def Tn(self):
+        return sin(self.a*n*pi*t/self.f.L())
+    
+    def Xn(self):
+        return sin(n*pi*x/self.f.L())
+    
+    def say_eqs(self):
+        LHS = latex(self.a^2 * function(self.u + "_{xx}",t,x))
+        say = r"$${LHS}={u}_{{tt}}(t,x)$$ ".format(u=self.u,LHS=LHS)
+        say += r"$${u}(t,x=0)=0,\,{u}(t,x={L})=0$$ ".format(u = self.u, L=latex(self.f.L()))
+        say += r"$${u}(t=0,x)=0$$".format(u = self.u)
+        say += r"$${u}_t(t=0,x)={f}$$".format(u = self.u, f = latex(self.f))
+        return say
+    
+    def say_fseries(self):
+        say = r"We can write "
+        say += r"$${u}(t,x)=\sum_{{n=1}}^\infty k_n{Tn}{Xn},$$ ".format(u = self.u, Tn = latex(self.Tn()), Xn = latex(self.Xn()))
+        say += r"where the $k_n{anpipL}=b_n$ are the Fourier sine coefficients of ${f}$.<br>".format(f=latex(self.f),anpipL=latex(self.a*n*pi/self.f.L()),L=self.f.L())
+        return say + self.f.say_sin_coeff()
+    
+    def kn(self):
+        return self.f.L()/self.a/n/pi*self.f.sin_coeff()
+    
+    def psum(self,m):
+        return sum([self.kn()(n=k)*self.Tn()(n=k)*self.Xn()(n=k) for k in range(1, m+1)])
+    
+    def say_psum(self, m):
+        say = r"We have "
+        say += r"$$s_{{{m}}}(t,x)=\sum_{{n=1}}^{{{m}}} k_n{Tn}{Xn}={sm}$$".format(m = latex(m), Tn = latex(self.Tn()), Xn = latex(self.Xn()), sm = latex(self.psum(m)))
+        return say

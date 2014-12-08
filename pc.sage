@@ -175,7 +175,7 @@ class pc:
 
     def say_sin_coeff(self):
 
-        return r"We have $b_n=$ " + pc([[c[0],c[1]*sin(n*pi*self.fvar/self.L())] for c in self.flist], fsymbol = self.fsymbol * sin(n*pi*self.fvar/self.L())).say_integral(0,self.L(),2/self.L()) + "<br>"
+        return r"We have $b_n=$ " + pc([[c[0],c[1]*sin(n*pi*self.fvar/self.L())] for c in self.flist], fsymbol = self.fsymbol * sin(n*pi*self.fvar/self.L())).say_integral(lb=0,ub=self.L(),mult=2/self.L()) + "<br>"
 
     def say_cos_coeff(self, cterm = True):
 

@@ -4,7 +4,7 @@ max_m = 5
 max_step = 4
 max_abs = 4
 
-plist = ["Random", "Heat Equation"]
+plist = ["Random", "Heat Equation", "Wave Equation"]
 
 @interact
 def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), regen = Button(text="Regenerate Problem", default=True, value=True, label = "")):
@@ -92,3 +92,53 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
                                             
                     if cplot:
                         show(problem.plot_psum(50))
+                        
+    if psel == plist[2]:
+    
+        blist = ["Random", "Zero Initial Velocity", "Zero Initial Displacement"]
+        rlist = ["Random", "Formal Solution", "Partial Sum"]
+        llist = ["Random", "From Graph", "From Formula"]
+        
+        @interact
+        def _f(bsel = Selector(blist, label = "BC type:", selector_type = "button"), rsel = Selector(rlist, label = "problem type:", selector_type = "button"), lsel = Selector(llist, label = "NHBC represented by:", selector_type = "button"), regen1 = Button(text="Regenerate Problem", default=True, value=True, label = "")):
+            if bsel == blist[0]:
+                bsel = choice(blist[1:])
+            if rsel == rlist[0]:
+                rsel = choice(rlist[1:])
+            if lsel == llist[0]:
+                lsel = choice(llist[1:])
+                
+            f = generate_pc()
+            a = 2^randint(-3,3)
+            
+            if bsel == blist[1]:
+                problem = ZVWE1d(f = f, a = a)
+            else:
+                problem = ZDWE1d(f = f, a = a)
+                    
+            if rsel == rlist[1]:
+                html(r"Find the formal solution to the problem")
+
+            else:
+                m = randint(min_m, max_m)
+                html(r"Find the partial sum $s_{{{m}}}(t,x)$ to the problem".format(m = latex(m)))
+
+            html(problem.say_eqs())
+
+            if lsel == llist[1]:
+                html("Where $f(x)$ has graph<br>")
+                show(f.plot_function())
+            else:
+                html("Where $f(x)$ has formula" + f.say_function())
+
+            @interact
+            def _f(solution = Checkbox(label = "Show Solution", default = False), cplot = Checkbox(label = "Draw Contour Plot of $s_{50}(t,x)$", default = False)):
+                if solution:
+                    html(problem.say_fseries())
+                    if rsel == rlist[2]:
+                        html(problem.say_psum(m))
+
+                if cplot:
+                    show(problem.plot_psum(50))
+
+            
