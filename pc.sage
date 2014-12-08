@@ -181,8 +181,8 @@ class pc:
 
         say = r"We have "
         if cterm:
-            say += "$a_0=$ " + self.say_integral(0,self.L(),2/self.L()) + ", <br> and for $n>0:$ "
-        return say + "$a_n=$ " +pc([[c[0],c[1]*cos(n*pi*self.fvar/self.L())] for c in self.flist], fsymbol = self.fsymbol * cos(n*pi*self.fvar/self.L())).say_integral(0,self.L(),2/self.L())
+            say += "$a_0=$ " + self.say_integral(lb=0,ub=self.L(),mult=2/self.L()) + ", <br> and for $n>0:$ "
+        return say + "$a_n=$ " +pc([[c[0],c[1]*cos(n*pi*self.fvar/self.L())] for c in self.flist], fsymbol = self.fsymbol * cos(n*pi*self.fvar/self.L())).say_integral(lb=0,ub=self.L(),mult=2/self.L())
 
     def plot_function(self, color='blue', thickness=1, legend_label="", default_label=true):
         if default_label:
