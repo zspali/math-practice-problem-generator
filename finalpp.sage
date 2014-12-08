@@ -64,7 +64,7 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
             
             if bsel == blist[2]:
             
-                problem = IHE1d(f = f, bc = bc, alpha2 = alpha2)
+                problem = IHE1d(f = f, alpha2 = alpha2)
                     
                 if rsel == rlist[1]:
                     html(r"Find the formal solution to the problem")
