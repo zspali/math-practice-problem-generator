@@ -59,3 +59,24 @@ class NHHE1d(HHE1d):
         say = r"We have "
         say += r"$$s_{{{m}}}(t,x)=v(x)+\sum_{{n=1}}^{{{m}}} b_n{Tn}{Xn}={sm}$$".format(m = latex(m), Tn = latex(self.Tn()), Xn = latex(self.Xn()), sm = latex(self.psum(m)))
         return say
+    
+class IHE1d(HHE1d):
+    
+    def Xn(self):
+        return cos(n*pi*x/self.f.L())
+    
+    def say_eqs(self):
+        LHS = latex(self.alpha2 * function(self.u + "_{xx}",t,x))
+        say = r"$${LHS}={u}_{{t}}(t,x)$$ ".format(u=self.u,LHS=LHS)
+        say += r"$${u}_x(t,x=0)={T0},\,{u}_x(t,x={L})={T1}$$ ".format(u = self.u, T0=latex(self.bc[0]), T1=latex(self.bc[1]), L=latex(self.f.L()))
+        say += r"$${u}(t=0,x)={f}$$".format(u = self.u, f = latex(self.f))
+        return say
+    
+    def psum(self,m):
+        an = SR(self.f.cos_coeff())
+        return self.f.cos_coeff(m=0)/2+sum([an(n=k)*self.Tn()(n=k)*self.Xn()(n=k) for k in range(1, m+1)])
+    
+    def say_psum(self, m):
+        say = r"We have "
+        say += r"$$s_{{{m}}}(t,x)=\frac12a_0+\sum_{{n=1}}^{{{m}}} a_n{Tn}{Xn}={sm}$$".format(m = latex(m), Tn = latex(self.Tn()), Xn = latex(self.Xn()), sm = latex(self.psum(m)))
+        return say

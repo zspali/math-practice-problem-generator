@@ -12,7 +12,7 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
         psel = choice(plist[1:])
     if psel == plist[1]:
     
-        blist = ["Random", "Temperatures fixed at ends"]
+        blist = ["Random", "Temperatures fixed at ends", "Insulated ends"]
         rlist = ["Random", "Formal Solution", "Partial Sum"]
         llist = ["Random", "From Graph", "From Formula"]
         
@@ -36,6 +36,35 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
                     problem = HHE1d(f = f, bc = bc, alpha2 = alpha2)
                 else:
                     problem = NHHE1d(f = f, bc = bc, alpha2 = alpha2)
+                    
+                if rsel == rlist[1]:
+                    html(r"Find the formal solution to the problem")
+                    
+                else:
+                    m = randint(min_m, max_m)
+                    html(r"Find the partial sum $s_{{{m}}}(t,x)$ to the problem".format(m = latex(m)))
+                    
+                html(problem.say_eqs())
+                
+                if lsel == llist[1]:
+                    html("Where $f(x)$ has graph<br>")
+                    show(f.plot_function())
+                else:
+                    html("Where $f(x)$ has formula" + f.say_function())
+                    
+                @interact
+                def _f(solution = Checkbox(label = "Show Solution", default = False), cplot = Checkbox(label = "Draw Contour Plot of $s_{50}(t,x)$", default = False)):
+                    if solution:
+                        html(problem.say_fseries())
+                        if rsel == rlist[2]:
+                            html(problem.say_psum(m))
+                                            
+                    if cplot:
+                        show(problem.plot_psum(50))
+            
+            if bsel == blist[2]:
+            
+                problem = IHE1d(f = f, bc = bc, alpha2 = alpha2)
                     
                 if rsel == rlist[1]:
                     html(r"Find the formal solution to the problem")

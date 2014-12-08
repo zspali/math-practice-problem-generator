@@ -89,10 +89,18 @@ class pc:
         return not False in [bool(SR(flist[len(flist)/2 + k][1])==-SR(flist[len(flist)/2 - k - 1][1](x=-x))) for k in range(0,len(flist)/2)]
     
     def sin_coeff(self, m = n):
-        return 1/self.L()*(sum([integrate(c[1]*sin(m*pi*self.fvar/self.L()),self.fvar,c[0][0],c[0][1]) for c in self.flist])-self.fvar+self.fvar).full_simplify().expand().subs_expr(sin(n*pi) == 0)
+        if self.flist[0][0][0]==0:
+            d=2
+        else:
+            d=1
+        return d/self.L()*(sum([integrate(c[1]*sin(m*pi*self.fvar/self.L()),self.fvar,c[0][0],c[0][1]) for c in self.flist])-self.fvar+self.fvar).full_simplify().expand().subs_expr(sin(n*pi) == 0)
 
     def cos_coeff(self, m = n):
-        return 1/self.L()*(sum([integrate(c[1]*cos(m*pi*self.fvar/self.L()),self.fvar,c[0][0],c[0][1]) for c in self.flist])-self.fvar+self.fvar).full_simplify().expand().subs_expr(sin(n*pi) == 0)
+        if self.flist[0][0][0]==0:
+            d=2
+        else:
+            d=1
+        return d/self.L()*(sum([integrate(c[1]*cos(m*pi*self.fvar/self.L()),self.fvar,c[0][0],c[0][1]) for c in self.flist])-self.fvar+self.fvar).full_simplify().expand().subs_expr(sin(n*pi) == 0)
     
     def partial_sum(self, m):
         x = self.fvar
@@ -184,14 +192,15 @@ class pc:
     def plot_psum(self, m, color='red', thickness=1, legend_label="", default_label=true):
         if default_label:
             legend_label=r"$s_{{{}}}({})$".format(latex(m),latex(self.fvar))
-        return plot(self.partial_sum(m), (self.fvar,self.flist[0][0][0],self.flist[-1][0][1]), legend_label=legend_label, color=color, thickness=thickness)
+        return plot(self.partial_sum(m), (self.fvar,-self.L(),self.L()), legend_label=legend_label, color=color, thickness=thickness)
 
-def generate_pc(max_step = 2, max_abs = 4):
+def generate_pc(max_step = 2, max_abs = 4, zero_int=false):
 
     r = range(-max_abs,max_abs + 1)
-    i = randint(0,2*max_abs)
+    r.pop(r.index(0))
+    i = randint(0,2*max_abs - 1)
     c1 = r.pop(i)
-    j = randint(0,2*max_abs - 1)
+    j = randint(0,2*max_abs - 2)
     c2 = r.pop(j)
     step = randint(1,max_step)
 
@@ -202,6 +211,11 @@ def generate_pc(max_step = 2, max_abs = 4):
             list_base = [[(0,step),c1],[(step,2*step),c2]]
     else:
         list_base = [[(0,step),c1+c2*x]]
-   
-    return pc(list_base)
+    
+    f=pc(list_base)
+    if zero_int:
+        a0 = f.extension(s=0).cos_coeff(m=0)
+        f = pc([[c[0],c[1]-a0/2] for c in f.flist])
+    
+    return f
 
