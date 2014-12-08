@@ -72,6 +72,12 @@ class IHE1d(HHE1d):
         say += r"$${u}(t=0,x)={f}$$".format(u = self.u, f = latex(self.f))
         return say
     
+    def say_fseries(self):
+        say = r"We can write "
+        say += r"$${u}(t,x)=\frac12a_0+\sum_{{n=1}}^\infty a_n{Tn}{Xn},$$ ".format(u = self.u, Tn = latex(self.Tn()), Xn = latex(self.Xn()))
+        say += r"where the $a_n$ are the Fourier sine coefficients of ${f}$.<br>".format(f=latex(self.f))
+        return say + self.f.say_cos_coeff()
+    
     def psum(self,m):
         an = SR(self.f.cos_coeff())
         return self.f.cos_coeff(m=0)/2+sum([an(n=k)*self.Tn()(n=k)*self.Xn()(n=k) for k in range(1, m+1)])
