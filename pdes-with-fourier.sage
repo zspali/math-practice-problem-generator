@@ -247,7 +247,7 @@ class DP2d:
         say += r"Then the nonhomogeneous boundary condition reads "
         say += r"$$ {f}=v({x},{y})=v(x,y)=\sum_{{n=1}}^\infty k_n{Knev}{Fn} $$ ".format(x=latex(self.x()), y=latex(self.y() == self.y_subs()), Knev=latex(self.Knev()), Fn=latex(self.Fn()), f=latex(self.f()))
         say += r"That is we need the $k_n{Knev}$ to be the Fourier sine coefficients $b_n$ of ${f}$. <br>".format(Knev = latex(self.Knev()), f=latex(self.f()))
-        return say + self.f.say_sin_coeff()
+        return say + self.f().say_sin_coeff()
     
     def say_psum(self, m):
         return r"We have $$s_{{{m}}}(x,y)=\sum_{{n=1}}^{{{m}}} k_n{Kn}{Fn}={sm}$$ ".format(Kn=latex(self.Kn()), Fn=latex(self.Fn()), m=latex(m), sm=latex(self.psum(m)))
