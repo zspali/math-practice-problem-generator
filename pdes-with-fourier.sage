@@ -216,12 +216,12 @@ class DP2d:
     
     
     def say_eqs(self):
-        say = r"$$ v_{xx}(x,y)+v_{yy}(x,y)=0 $$"
-        say += r"$$ v(x=0,y)={k},\,v(x={a},y)={f} $$".format(k=latex(self.bc[0][0]), a = latex(self.ab[0]), f = latex(self.bc[0][1]))
-        say += r"$$ v(x,y=0)={h},\,v(x,y={b})={g} $$".format(h=latex(self.bc[1][0]), b = latex(self.ab[1]), g = latex(self.bc[1][1]))
+        say = r"$$ v_{xx}(x,y)+v_{yy}(x,y)=0 $$ "
+        say += r"$$ v(x=0,y)={k},\,v(x={a},y)={f} $$ ".format(k=latex(self.bc[0][0]), a = latex(self.ab[0]), f = latex(self.bc[0][1]))
+        say += r"$$ v(x,y=0)={h},\,v(x,y={b})={g} $$ ".format(h=latex(self.bc[1][0]), b = latex(self.ab[1]), g = latex(self.bc[1][1]))
         return say
     
-    def say_fsols(self):
+    def say_fseries(self):
         say = r"Separating the variables: $v(x,y)=X(x)Y(y)$, the PDE gives the parametric ODE's "
         pdelist = [r"X''(x)-\lambda X(x)=0",r"Y''(y)+\lambda Y(y)"]
         say += r"$$ X''(x)-\lambda X(x)=0,\,Y''(y)+\lambda Y(y)$$ "
@@ -240,7 +240,7 @@ class DP2d:
         say += r"$$ \lambda_n={lambdan},\,{Xn}={Fn} $$".format(lambdan = latex((-1)^self.XisF()*n^2*pi^2/self.a()^2), Xn=Xn, Fn=latex(self.Fn()))
         Ydd = insert_after_first(Y, "''")
         say += r"Substituting $\lambda=\lambda_n$ to the other ODE, we need to find a nonzero solution to "
-        say += r"$${Ydd}-{npipa}{Y}=0,\,{BC}$$".format(Y=Y, Ydd=Ydd, npipa=latex(n^2*pi^2/self.a()^2),BC=bclist[2 * self.XisF()])
+        say += r"$${Ydd}-{npipa}{Y}=0,\,{BC}$$ ".format(Y=Y, Ydd=Ydd, npipa=latex(n^2*pi^2/self.a()^2),BC=bclist[2 * self.XisF()])
         Yn = insert_after_first(Y, "_n")
         say += r"Which is $${Yn}={Kn}$$ ".format(Yn=Yn, Kn=latex(self.Kn()))
         say += r"If we take the formal function $$v(x,y)=\sum_{{n=1}}^\infty k_n{Kn}{Fn}$$ ".format(Kn=latex(self.Kn()), Fn=latex(self.Fn()))
