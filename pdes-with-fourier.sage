@@ -151,3 +151,103 @@ class ZDWE1d(HHE1d):
         say = r"We have "
         say += r"$$s_{{{m}}}(t,x)=\sum_{{n=1}}^{{{m}}} k_n{Tn}{Xn}={sm}$$".format(m = latex(m), Tn = latex(self.Tn()), Xn = latex(self.Xn()), sm = latex(self.psum(m)))
         return say
+
+var('x,y')
+
+def insert_after_first(st, ins):
+    Xnl = list(st)
+    Xnl.insert(1,ins)
+    return join(Xnl)
+    
+class DP2d:
+    
+    def __init__(self, bc, ab): # bc = [ [x=0, x=a], [y=0, y=b] ]
+        self.bc = bc
+        self.ab = ab
+        
+    def XisF(self):
+        return self.bc[0] == [0,0]
+    
+    def x(self):
+        return [y,x][self.XisF()]
+    
+    def a(self):
+        return self.ab[1-self.XisF()]
+    
+    def b(self):
+        return self.ab[self.XisF()]
+    
+    def y(self):
+        return [x,y][self.XisF()]
+    
+    def v_is_y(self):
+        return bool(self.bc[self.XisF()][0] == 0)
+    
+    def v(self):
+        return self.y() - (1 - self.v_is_y()) * self.b()
+    
+    def Fn(self):
+        return sin ( n * pi * self.x() / self.a() )
+    
+    def Kn(self):
+        return sinh ( n * pi * self.v() / self. a() )
+    
+    def Knev(self):
+        vari = self.y()
+        valu = self.y_subs()
+        return self.Kn().subs(vari==valu)
+    
+    def f(self):
+        return self.bc[self.XisF()][self.v_is_y()]
+    
+    def y_subs(self):
+        return [0,self.b()][self.v_is_y()]
+    
+    def kn(self):
+        vari = self.y()
+        valu = self.y_subs()
+        return self.f().sin_coeff() / self.Knev()
+                
+    def psum(self, m):
+        return sum([self.kn()(n=k)*self.Kn()(n=k)*self.Fn()(n=k) for k in range(1, m+1)])
+    
+    def plot_psum(self, m):
+        return contour_plot(self.psum(m), (x,0,self.ab[0]), (y,0,self.ab[1]), contours = 50)
+    
+    
+    def say_eqs(self):
+        say = r"$$ v_{xx}(x,y)+v_{yy}(x,y)=0 $$"
+        say += r"$$ v(x=0,y)={k},\,v(x={a},y)={f} $$".format(k=latex(self.bc[0][0]), a = latex(self.ab[0]), f = latex(self.bc[0][1]))
+        say += r"$$ v(x,y=0)={h},\,v(x,y={b})={g} $$".format(h=latex(self.bc[1][0]), b = latex(self.ab[1]), g = latex(self.bc[1][1]))
+        return say
+    
+    def say_fsols(self):
+        say = r"Separating the variables: $v(x,y)=X(x)Y(y)$, the PDE gives the parametric ODE's "
+        pdelist = [r"X''(x)-\lambda X(x)=0",r"Y''(y)+\lambda Y(y)"]
+        say += r"$$ X''(x)-\lambda X(x)=0,\,Y''(y)+\lambda Y(y)$$ "
+        say += r"The homogeneous boundary conditions become "
+        bclist = [ "X(x={})=0".format(latex(k)) for k in [0,self.ab[0]]] + [ "Y(y={})=0".format(latex(k)) for k in [0,self.ab[1]]]
+        bclist.pop(2*self.XisF() + self.v_is_y())
+        say += "$${}$$ ".format(reduce( lambda x,y: x + r",\," + y, bclist))
+        X = r"{X}({x})".format(X=latex(self.x()).capitalize(), x=latex(self.x()))
+        Y = r"{Y}({y})".format(Y=latex(self.y()).capitalize(), y=latex(self.y()))
+        say += r"Since there are two HBC's for ${X}$, we need the solution of the eigenfunction problem for ".format(X=X)
+        say += r"$$ {PODE},\,{BC1},\,{BC2} $$ ".format(PODE=pdelist[1-self.XisF()], BC1=bclist[1-self.XisF()], BC2=bclist[2-self.XisF()])
+        say += r"The eigenvalues and eigenfunctions are "
+        Xnl = list(X)
+        Xnl.insert(1,"_n")
+        Xn = reduce(lambda x,y: x+y, Xnl)
+        say += r"$$ \lambda_n={lambdan},\,{Xn}={Fn} $$".format(lambdan = latex((-1)^self.XisF()*n^2*pi^2/self.a()^2), Xn=Xn, Fn=latex(self.Fn()))
+        Ydd = insert_after_first(Y, "''")
+        say += r"Substituting $\lambda=\lambda_n$ to the other ODE, we need to find a nonzero solution to "
+        say += r"$${Ydd}-{npipa}{Y}=0,\,{BC}$$".format(Y=Y, Ydd=Ydd, npipa=latex(n^2*pi^2/self.a()^2),BC=bclist[2 * self.XisF()])
+        Yn = insert_after_first(Y, "_n")
+        say += r"Which is $${Yn}={Kn}$$ ".format(Yn=Yn, Kn=latex(self.Kn()))
+        say += r"If we take the formal function $$v(x,y)=\sum_{{n=1}}^\infty k_n{Kn}{Fn}$$ ".format(Kn=latex(self.Kn()), Fn=latex(self.Fn()))
+        say += r"Then the nonhomogeneous boundary condition reads "
+        say += r"$$ {f}=v({x},{y})=v(x,y)=\sum_{{n=1}}^\infty k_n{Knev}{Fn} $$ ".format(x=latex(self.x()), y=latex(self.y() == self.y_subs()), Knev=latex(self.Knev()), Fn=latex(self.Fn()), f=latex(self.f()))
+        say += r"That is we need the $k_n{Knev}$ to be the Fourier sine coefficients $b_n$ of ${f}$. <br>".format(Knev = latex(self.Knev()), f=latex(self.f()))
+        return say + self.f.say_sin_coeff()
+    
+    def say_psum(self, m):
+        return r"We have $$s_{{{m}}}(x,y)=\sum_{{n=1}}^{{{m}}} k_n{Kn}{Fn}={sm}$$ ".format(Kn=latex(self.Kn()), Fn=latex(self.Fn()), m=latex(m), sm=latex(self.psum(m)))

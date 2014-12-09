@@ -194,8 +194,8 @@ class pc:
             legend_label=r"$s_{{{}}}({})$".format(latex(m),latex(self.fvar))
         return plot(self.partial_sum(m), (self.fvar,-self.L(),self.L()), legend_label=legend_label, color=color, thickness=thickness)
 
-def generate_pc(max_step = 2, max_abs = 4, zero_int=false):
-
+def generate_pc(max_step = 2, max_abs = 4, zero_int=false, vari=x):
+    
     r = range(-max_abs,max_abs + 1)
     r.pop(r.index(0))
     i = randint(0,2*max_abs - 1)
@@ -206,16 +206,16 @@ def generate_pc(max_step = 2, max_abs = 4, zero_int=false):
 
     if randint(0,1) == 0: # 2 pieces or not
         if randint(0,1) == 0: # lin start or not
-            list_base = [[(0,step),c1*x],[(step,2*step),(c1*step)*randint(0,1)]]
+            list_base = [[(0,step),c1*vari],[(step,2*step),(c1*step)*randint(0,1)]]
         else:
             list_base = [[(0,step),c1],[(step,2*step),c2]]
     else:
-        list_base = [[(0,step),c1+c2*x]]
+        list_base = [[(0,step),c1+c2*vari]]
     
-    f=pc(list_base)
+    f=pc(list_base, symbol=function("f",vari))
     if zero_int:
         a0 = f.extension(s=0).cos_coeff(m=0)
-        f = pc([[c[0],c[1]-a0/2] for c in f.flist])
+        f = f.changed_flist([[c[0],c[1]-a0/2] for c in f.flist])
     
     return f
 
