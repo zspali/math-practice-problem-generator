@@ -212,7 +212,7 @@ def generate_pc(max_step = 2, max_abs = 4, zero_int=false, vari=x):
     else:
         list_base = [[(0,step),c1+c2*vari]]
     
-    f=pc(list_base, symbol=function("f",vari))
+    f=pc(list_base, fsymbol=function("f",vari))
     if zero_int:
         a0 = f.extension(s=0).cos_coeff(m=0)
         f = f.changed_flist([[c[0],c[1]-a0/2] for c in f.flist])
