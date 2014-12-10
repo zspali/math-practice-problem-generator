@@ -161,7 +161,7 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
             
             f = generate_pc(vari=vari, zero_int = bool( bsel != blist[1] ))
             
-            html(bsel + "<br>")
+            html(blist + "<br>")
             
             a = f.L()
             b = randint(1,max_abs)
