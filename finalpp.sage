@@ -159,7 +159,7 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
             xin = randint(0,1)
             vari = [x,y][xin]
             
-            f = generate_pc(vari=vari, zero_int = bool( bsel == blist[1] ))
+            f = generate_pc(vari=vari, zero_int = bool( bsel != blist[1] ))
             
             a = f.L()
             b = randint(1,max_abs)
