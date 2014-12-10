@@ -215,7 +215,7 @@ def generate_pc(max_step = 2, max_abs = 4, zero_int=false, vari=x):
     f=pc(list_base, fsymbol=function("f",vari))
     if zero_int:
         a0 = f.extension(s=0).cos_coeff(m=0)
-        f = f.changed_flist([[c[0],c[1]-a0/2] for c in f.flist])
-    
-    return f
+        return f.changed_flist([[c[0],c[1]-a0/2] for c in f.flist])
+    else:
+        return f
 
