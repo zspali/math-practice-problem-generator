@@ -28,9 +28,10 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
             f = generate_pc()
             alpha2 = 2^randint(-3,3)
             
+            bc = [randint(-max_abs,max_abs), randint(-max_abs,max_abs)]
+                
             if bsel == blist[1]:
             
-                bc = [randint(-max_abs,max_abs), randint(-max_abs,max_abs)]
                 
                 if bc == [0,0]:
                     problem = HHE1d(f = f, bc = bc, alpha2 = alpha2)
@@ -172,10 +173,15 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
                 
             bc.insert(xin,[0,0])
             
-            if bsel == blist[1]:
-                problem = DP2d(bc = bc, ab = [a,b])
+            if xin == 0:
+                ab = [a,b]
             else:
-                problem = NP2d(bc = bc, ab = [a,b])
+                ab = [b,a]
+            
+            if bsel == blist[1]:
+                problem = DP2d(bc = bc, ab = ab)
+            else:
+                problem = NP2d(bc = bc, ab = ab)
                     
             if rsel == rlist[1]:
                 html(r"Find the formal solution to the problem")
