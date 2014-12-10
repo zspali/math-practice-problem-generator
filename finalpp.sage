@@ -28,9 +28,10 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
             f = generate_pc()
             alpha2 = 2^randint(-3,3)
             
+            bc = [randint(-max_abs,max_abs), randint(-max_abs,max_abs)]
+                
             if bsel == blist[1]:
             
-                bc = [randint(-max_abs,max_abs), randint(-max_abs,max_abs)]
                 
                 if bc == [0,0]:
                     problem = HHE1d(f = f, bc = bc, alpha2 = alpha2)
