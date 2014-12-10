@@ -157,7 +157,7 @@ class pc:
         mirror.reverse()
         new_fl = mirror + split_fl
 
-        return pc(new_fl)
+        return pc(new_fl, fsymbol = self.fsymbol)
 
     def fval(self, ival):
 
