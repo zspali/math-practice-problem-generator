@@ -143,7 +143,7 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
 
     if psel == plist[3]:
     
-        blist = ["Random", "Dirichlet Problem"]
+        blist = ["Random", "Dirichlet Problem", "Neumann Problem"]
         rlist = ["Random", "Formal Solution", "Partial Sum"]
         llist = ["Random", "From Graph", "From Formula"]
         
@@ -159,7 +159,11 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
             xin = randint(0,1)
             vari = [x,y][xin]
             
-            f = generate_pc(vari=vari)
+            if bsel == blist[1]:
+                f = generate_pc(vari=vari)
+            else:
+                f = generate_pc(vari=vari, zero_int = true)
+            
             a = f.L()
             b = randint(1,max_abs)
             
@@ -170,7 +174,10 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
                 
             bc.insert(xin,[0,0])
             
-            problem = DP2d(bc = bc, ab = [a,b])
+            if bsel == blist[1]:
+                problem = DP2d(bc = bc, ab = [a,b])
+            else:
+                problem = NP2d(bc = bc, ab = [a,b])
                     
             if rsel == rlist[1]:
                 html(r"Find the formal solution to the problem")

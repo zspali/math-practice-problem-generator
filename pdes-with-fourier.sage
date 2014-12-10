@@ -237,7 +237,7 @@ class DP2d:
         Xnl = list(X)
         Xnl.insert(1,"_n")
         Xn = reduce(lambda x,y: x+y, Xnl)
-        say += r"$$ \lambda_n={lambdan},\,{Xn}={Fn} $$".format(lambdan = latex((-1)^self.XisF()*n^2*pi^2/self.a()^2), Xn=Xn, Fn=latex(self.Fn()))
+        say += r"$$ \lambda_n={lambdan},\,{Xn}={Fn},\,n=1,2,\dotsc $$".format(lambdan = latex((-1)^self.XisF()*n^2*pi^2/self.a()^2), Xn=Xn, Fn=latex(self.Fn()))
         Ydd = insert_after_first(Y, "''")
         say += r"Substituting $\lambda=\lambda_n$ to the other ODE, we need to find a nonzero solution to "
         say += r"$${Ydd}-{npipa}{Y}=0,\,{BC}$$ ".format(Y=Y, Ydd=Ydd, npipa=latex(n^2*pi^2/self.a()^2),BC=bclist[2 * self.XisF()])
@@ -245,9 +245,63 @@ class DP2d:
         say += r"Which is $${Yn}={Kn}$$ ".format(Yn=Yn, Kn=latex(self.Kn()))
         say += r"If we take the formal function $$v(x,y)=\sum_{{n=1}}^\infty k_n{Kn}{Fn}$$ ".format(Kn=latex(self.Kn()), Fn=latex(self.Fn()))
         say += r"Then the nonhomogeneous boundary condition reads "
-        say += r"$$ {f}=v({x},{y})=v(x,y)=\sum_{{n=1}}^\infty k_n{Knev}{Fn} $$ ".format(x=latex(self.x()), y=latex(self.y() == self.y_subs()), Knev=latex(self.Knev()), Fn=latex(self.Fn()), f=latex(self.f()))
+        say += r"$$ {f}=v({x},{y})=\sum_{{n=1}}^\infty k_n{Knev}{Fn} $$ ".format(x=latex(self.x()), y=latex(self.y() == self.y_subs()), Knev=latex(self.Knev()), Fn=latex(self.Fn()), f=latex(self.f()))
         say += r"That is we need the $k_n{Knev}$ to be the Fourier sine coefficients $b_n$ of ${f}$. <br>".format(Knev = latex(self.Knev()), f=latex(self.f()))
         return say + self.f().say_sin_coeff()
     
     def say_psum(self, m):
         return r"We have $$s_{{{m}}}(x,y)=\sum_{{n=1}}^{{{m}}} k_n{Kn}{Fn}={sm}$$ ".format(Kn=latex(self.Kn()), Fn=latex(self.Fn()), m=latex(m), sm=latex(self.psum(m)))
+    
+class NP2d(DP2d):
+    
+    def Fn(self):
+        return cos ( n * pi * self.x() / self.a() )
+    
+    def Kn(self):
+        return cosh ( n * pi * self.v() / self. a() )
+    
+    def Knev(self):
+        vari = self.y()
+        valu = self.y_subs()
+        return diff(self.Kn(), vari).subs(vari==valu)
+    
+    def kn(self):
+        vari = self.y()
+        valu = self.y_subs()
+        return self.f().cos_coeff() / self.Knev()
+    
+    def say_eqs(self):
+        say = r"$$ v_{xx}(x,y)+v_{yy}(x,y)=0 $$ "
+        say += r"$$ v_x(x=0,y)={k},\,v_x(x={a},y)={f} $$ ".format(k=latex(self.bc[0][0]), a = latex(self.ab[0]), f = latex(self.bc[0][1]))
+        say += r"$$ v_y(x,y=0)={h},\,v_y(x,y={b})={g} $$ ".format(h=latex(self.bc[1][0]), b = latex(self.ab[1]), g = latex(self.bc[1][1]))
+        return say
+    
+    def say_fseries(self):
+        say = r"Separating the variables: $v(x,y)=X(x)Y(y)$, the PDE gives the parametric ODE's "
+        pdelist = [r"X''(x)-\lambda X(x)=0",r"Y''(y)+\lambda Y(y)"]
+        say += r"$$ X''(x)-\lambda X(x)=0,\,Y''(y)+\lambda Y(y)$$ "
+        say += r"The homogeneous boundary conditions become "
+        bclist = [ "X(x={})=0".format(latex(k)) for k in [0,self.ab[0]]] + [ "Y(y={})=0".format(latex(k)) for k in [0,self.ab[1]]]
+        bclist.pop(2*self.XisF() + self.v_is_y())
+        bcplist = map(lambda x: insert_after_first(x, "'"), bclist)
+        say += r"$${}$$".format(reduce(lambda x,y: x + r",\," + y, bcplist))
+        X = r"{X}({x})".format(X=latex(self.x()).capitalize(), x=latex(self.x()))
+        Y = r"{Y}({y})".format(Y=latex(self.y()).capitalize(), y=latex(self.y()))
+        say += r"Since there are two HBC's for ${X}$, we need the solution of the eigenfunction problem for ".format(X=X)
+        say += r"$$ {PODE},\,{BC1},\,{BC2} $$ ".format(PODE=pdelist[1-self.XisF()], BC1=bcplist[1-self.XisF()], BC2=bcplist[2-self.XisF()])
+        say += r"The eigenvalues and eigenfunctions are "
+        Xnl = list(X)
+        Xnl.insert(1,"_n")
+        Xn = reduce(lambda x,y: x+y, Xnl)
+        say += r"$$ \lambda_n={lambdan},\,{Xn}={Fn},\,n=0,1,2,\dotsc $$".format(lambdan = latex((-1)^self.XisF()*n^2*pi^2/self.a()^2), Xn=Xn, Fn=latex(self.Fn()))
+        Ydd = insert_after_first(Y, "''")
+        say += r"Substituting $\lambda=\lambda_n$ to the other ODE, we need to find a nonzero solution to "
+        say += r"$${Ydd}-{npipa}{Y}=0,\,{BC}$$ ".format(Y=Y, Ydd=Ydd, npipa=latex(n^2*pi^2/self.a()^2),BC=insert_after_first(bclist[2 * self.XisF()],"'"))
+        Yn = insert_after_first(Y, "_n")
+        say += r"Which is $${Yn}={Kn}$$ ".format(Yn=Yn, Kn=latex(self.Kn()))
+        say += r"If we take the formal function $$v(x,y)=\sum_{{n=0}}^\infty k_n{Kn}{Fn}$$ ".format(Kn=latex(self.Kn()), Fn=latex(self.Fn()))
+        say += r"Then the nonhomogeneous boundary condition reads "
+        say += r"$$ {f}=v_{{{dy}}}({x},{y})=\sum_{{n=1}}^\infty k_n{Knev}{Fn} $$ ".format(dy = latex(self.y()), x=latex(self.x()), y=latex(self.y() == self.y_subs()), Knev=latex(self.Knev()), Fn=latex(self.Fn()), f=latex(self.f()))
+        say += r"That is we need the $k_n{Knev}$ to be the Fourier cosine coefficients $a_n$ of ${f}$ for $n>0$, and we need to check that $a_0=0$. We can let $k_0=0$. <br>".format(Knev = latex(self.Knev()), f=latex(self.f()))
+        return say + self.f().say_cos_coeff()
+    
