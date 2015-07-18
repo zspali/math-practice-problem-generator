@@ -14,8 +14,7 @@ class HDE3:
             if self.J == zero_matrix(3,3):
                 if self.is_defective == 0:
                     self.is_defective = randint(1,2)
-                    self.is_defective = bool(self.is_defective - 1)
-                if not self.is_defective:
+                if self.is_defective == 1:
                     self.J = diagonal_matrix([randint(-self.max_abs,self.max_abs) for i in range(3)])
                 else:
                     ints = range(-self.max_abs, self.max_abs+1)
