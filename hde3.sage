@@ -25,8 +25,7 @@ class HDE3:
                     r2 = ints.pop(i)
                     self.J = matrix(QQ,[[r1,0,0],[0,r2,1],[0,0,r2]])
             self.A = self.generate_mx()
-        else:
-            self.J = self.A.jordan_form()
+        self.J = self.A.jordan_form()
     def generate_trafo(self):
         T = [[1,0,0],[0,1,0],[0,0,1]]
         d = randint(0,3)
@@ -109,7 +108,7 @@ class HDE3:
         return latex(column_matrix([v]))
     
     def latex_evlist(self, evlist, start_index):
-        return r"\,".join(["=".join([r"\mathbf u_{0}".format(i+start_index),self.say_vector(evlist[i])]) for i in range(len(evlist))])
+        return r"\,".join(["=".join([r"\mathbf u_{0}".format(i+start_index+1),self.say_vector(evlist[i])]) for i in range(len(evlist))])
     
     def zeros_diff_columns(self,B, ii = range(3)):
         return filter(lambda p: ([] not in [k[2] for k in p]) and (p[0][2][0] != p[1][2][0]) and p[0][1] != 0 and p[1][1] != 0,[[[i,B.row(i),filter(lambda k: B.row(i)[k] == 0, range(3))] for i in j] for j in [[j0,j1] for j0 in ii for j1 in filter(lambda x: x != j0, ii)]])
