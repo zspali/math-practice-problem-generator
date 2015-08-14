@@ -111,9 +111,9 @@ class pc:
         flist = self.optimized_flist().flist
 
         if len(flist) == 1:
-            return r"$${}={},\quad {}\le {}< {}$$".format(latex(self),latex(flist[0][1]),latex(flist[0][0][0]),latex(self.fvar),latex(flist[0][0][1]))
+            return r"$${}={},\quad {}\le {}< {}$$ ".format(latex(self),latex(flist[0][1]),latex(flist[0][0][0]),latex(self.fvar),latex(flist[0][0][1]))
         else:
-            return r"$${}=\begin{{cases}} ".format(latex(self)) + reduce(lambda x,y: x + r" \\ " + y, [r"{} & {} \le ".format(latex(c[1]),latex(c[0][0])) + latex(self.fvar) + " < {}".format(latex(c[0][1])) for c in flist]) + r" \end{cases}$$"
+            return r"$${}=\begin{{cases}} ".format(latex(self)) + reduce(lambda x,y: x + r" \\ " + y, [r"{} & {} \le ".format(latex(c[1]),latex(c[0][0])) + latex(self.fvar) + " < {}".format(latex(c[0][1])) for c in flist]) + r" \end{cases}$$ "
 
     def say_integral(self, lb=0, ub=0, sb = true, mult = 1, fsymbol = "", fmult = 1):
 
@@ -139,16 +139,16 @@ class pc:
         else:
             flatex = latex(self) + latex(fmult)
         
-        say = r"$$"
+        say = r"$$ "
         if fsymbol != "":
             say += "{}=".format(fsymbol)
         say += latex_mult_sum([r"\int_{{{}}}^{{{}}}{}\,\mathrm d{}".format(latex(lb),latex(ub),flatex,latex(self.fvar))], mult=mult) + "="
         if fl_comp == []:
-            return say +r"0 $$"
+            return say +r"0 $$ "
         else:
-            say += latex_mult_sum([r"\int_{}^{}{}\,\mathrm d{}".format(blatex(c[0][0]),blatex(c[0][1]),blatex(c[1]),latex(self.fvar)) for c in fl_comp], mult=mult) + "$$"
-            say += "$$=" + latex_mult_sum([r"\left[{}\right]_{}^{}".format(latex(c[1]),blatex(c[0][0]),blatex(c[0][1])) for c in [[c[0],SR(integrate(c[1],self.fvar)).full_simplify().expand()] for c in fl_comp]], mult=mult) + "$$"
-            say += r"$$={}$$".format(latex(mult*sum([SR(integrate(c[1],self.fvar,c[0][0],c[0][1])).substitute(sin(n*pi) == 0) for c in fl_comp])))
+            say += latex_mult_sum([r"\int_{}^{}{}\,\mathrm d{}".format(blatex(c[0][0]),blatex(c[0][1]),blatex(c[1]),latex(self.fvar)) for c in fl_comp], mult=mult) + "$$ "
+            say += "$$=" + latex_mult_sum([r"\left[{}\right]_{}^{}".format(latex(c[1]),blatex(c[0][0]),blatex(c[0][1])) for c in [[c[0],SR(integrate(c[1],self.fvar)).full_simplify().expand()] for c in fl_comp]], mult=mult) + "$$ "
+            say += r"$$={}$$ ".format(latex(mult*sum([SR(integrate(c[1],self.fvar,c[0][0],c[0][1])).substitute(sin(n*pi) == 0) for c in fl_comp])))
         return say
 
     def extension(self, s = 0):
@@ -186,12 +186,12 @@ class pc:
 
     def plot_function(self, color='blue', thickness=1, legend_label="", default_label=true):
         if default_label:
-            legend_label=r"${}$".format(latex(self))
+            legend_label=r"${}$ ".format(latex(self))
         return sum([plot(c[1],(self.fvar,c[0][0],c[0][1]), color=color, thickness=thickness) for c in self.flist[:-1]]+[plot(c[1],(self.fvar,c[0][0],c[0][1]), color=color, thickness=thickness, legend_label=legend_label) for c in self.flist[-1:]])
     
     def plot_psum(self, m, color='red', thickness=1, legend_label="", default_label=true):
         if default_label:
-            legend_label=r"$s_{{{}}}({})$".format(latex(m),latex(self.fvar))
+            legend_label=r"$s_{{{}}}({})$ ".format(latex(m),latex(self.fvar))
         return plot(self.partial_sum(m), (self.fvar,-self.L(),self.L()), legend_label=legend_label, color=color, thickness=thickness)
 
 def generate_pc(max_step = 2, max_abs = 4, zero_int=false, vari=x):
