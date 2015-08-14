@@ -45,20 +45,20 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
                     m = randint(min_m, max_m)
                     html(r"Find the partial sum $s_{{{m}}}(t,x)$ to the problem".format(m = latex(m)))
                     
-                print(problem.say_eqs())
+                html(problem.say_eqs())
                 
                 if lsel == llist[1]:
                     html(r"Where $f(x)$ has graph<br>")
                     show(f.plot_function())
                 else:
-                    print(r"Where $f(x)$ has formula" + f.say_function())
+                    html(r"Where $f(x)$ has formula" + f.say_function())
                     
                 @interact
                 def _f(solution = Checkbox(label = "Show Solution", default = False), cplot = Checkbox(label = r"Draw Contour Plot of $s_{50}(t,x)$ ", default = False)):
                     if solution:
-                        print(problem.say_fseries())
+                        html(problem.say_fseries())
                         if rsel == rlist[2]:
-                            print(problem.say_psum(m))
+                            html(problem.say_psum(m))
                                             
                     if cplot:
                         show(problem.plot_psum(50))
