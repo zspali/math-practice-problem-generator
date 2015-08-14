@@ -18,7 +18,7 @@ class HHE1d:
         LHS = latex(self.alpha2 * function(self.u + "_{xx}",t,x))
         say = r"$${LHS}={u}_{{t}}(t,x)$$ ".format(u=self.u,LHS=LHS)
         say += r"$${u}(t,x=0)={T0},\,{u}(t,x={L})={T1}$$ ".format(u = self.u, T0=latex(self.bc[0]), T1=latex(self.bc[1]), L=latex(self.f.L()))
-        say += r"$${u}(t=0,x)={f}$$ ".format(u = self.u, f = latex(self.f))
+        say += r"$${u}(t=0,x)={f}$$ <br> ".format(u = self.u, f = latex(self.f))
         return say
     
     def say_fseries(self):
@@ -69,7 +69,7 @@ class IHE1d(HHE1d):
         LHS = latex(self.alpha2 * function(self.u + "_{xx}",t,x))
         say = r"$${LHS}={u}_{{t}}(t,x)$$ ".format(u=self.u,LHS=LHS)
         say += r"$${u}_x(t,x=0)={T0},\,{u}_x(t,x={L})={T1}$$ ".format(u = self.u, T0=latex(self.bc[0]), T1=latex(self.bc[1]), L=latex(self.f.L()))
-        say += r"$${u}(t=0,x)={f}$$ ".format(u = self.u, f = latex(self.f))
+        say += r"$${u}(t=0,x)={f}$$ <br> ".format(u = self.u, f = latex(self.f))
         return say
     
     def say_fseries(self):
@@ -105,7 +105,7 @@ class ZVWE1d(HHE1d):
         say = r"$${LHS}={u}_{{tt}}(t,x)$$ ".format(u=self.u,LHS=LHS)
         say += r"$${u}(t,x=0)=0,\,{u}(t,x={L})=0$$ ".format(u = self.u, L=latex(self.f.L()))
         say += r"$${u}(t=0,x)={f}$$ ".format(u = self.u, f = latex(self.f))
-        say += r"$${u}_t(t=0,x)=0$$ ".format(u = self.u)
+        say += r"$${u}_t(t=0,x)=0$$ <br> ".format(u = self.u)
         return say
     
     def say_fseries(self):
@@ -132,7 +132,7 @@ class ZDWE1d(HHE1d):
         say = r"$${LHS}={u}_{{tt}}(t,x)$$ ".format(u=self.u,LHS=LHS)
         say += r"$${u}(t,x=0)=0,\,{u}(t,x={L})=0$$ ".format(u = self.u, L=latex(self.f.L()))
         say += r"$${u}(t=0,x)=0$$ ".format(u = self.u)
-        say += r"$${u}_t(t=0,x)={f}$$ ".format(u = self.u, f = latex(self.f))
+        say += r"$${u}_t(t=0,x)={f}$$ <br> ".format(u = self.u, f = latex(self.f))
         return say
     
     def say_fseries(self):
@@ -218,7 +218,7 @@ class DP2d:
     def say_eqs(self):
         say = r"$$ v_{xx}(x,y)+v_{yy}(x,y)=0 $$ "
         say += r"$$ v(x=0,y)={k},\,v(x={a},y)={f} $$ ".format(k=latex(self.bc[0][0]), a = latex(self.ab[0]), f = latex(self.bc[0][1]))
-        say += r"$$ v(x,y=0)={h},\,v(x,y={b})={g} $$ ".format(h=latex(self.bc[1][0]), b = latex(self.ab[1]), g = latex(self.bc[1][1]))
+        say += r"$$ v(x,y=0)={h},\,v(x,y={b})={g} $$ <br> ".format(h=latex(self.bc[1][0]), b = latex(self.ab[1]), g = latex(self.bc[1][1]))
         return say
     
     def say_fseries(self):
@@ -273,7 +273,7 @@ class NP2d(DP2d):
     def say_eqs(self):
         say = r"$$ v_{xx}(x,y)+v_{yy}(x,y)=0 $$ "
         say += r"$$ v_x(x=0,y)={k},\,v_x(x={a},y)={f} $$ ".format(k=latex(self.bc[0][0]), a = latex(self.ab[0]), f = latex(self.bc[0][1]))
-        say += r"$$ v_y(x,y=0)={h},\,v_y(x,y={b})={g} $$ ".format(h=latex(self.bc[1][0]), b = latex(self.ab[1]), g = latex(self.bc[1][1]))
+        say += r"$$ v_y(x,y=0)={h},\,v_y(x,y={b})={g} $$ <br> ".format(h=latex(self.bc[1][0]), b = latex(self.ab[1]), g = latex(self.bc[1][1]))
         return say
     
     def say_fseries(self):
