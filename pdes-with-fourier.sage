@@ -157,7 +157,7 @@ var('x,y')
 def insert_after_first(st, ins):
     Xnl = list(st)
     Xnl.insert(1,ins)
-    return join(Xnl)
+    return "".join(Xnl)
     
 class DP2d:
     
