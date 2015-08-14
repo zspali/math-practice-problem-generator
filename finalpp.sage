@@ -54,7 +54,7 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
                     html(r"Where $f(x)$ has formula" + f.say_function())
                     
                 @interact
-                def _f(solution = Checkbox(label = "Show Solution", default = False), cplot = Checkbox(label = "Draw Contour Plot of $s_{50}(t,x)$ ", default = False)):
+                def _f(solution = Checkbox(label = "Show Solution", default = False), cplot = Checkbox(label = r"Draw Contour Plot of $s_{50}(t,x)$ ", default = False)):
                     if solution:
                         html(problem.say_fseries())
                         if rsel == rlist[2]:
@@ -85,7 +85,7 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
                     html(r"Where $f(x)$ has formula" + f.say_function())
                     
                 @interact
-                def _f(solution = Checkbox(label = "Show Solution", default = False), cplot = Checkbox(label = "Draw Contour Plot of $s_{50}(t,x)$ ", default = False)):
+                def _f(solution = Checkbox(label = "Show Solution", default = False), cplot = Checkbox(label = r"Draw Contour Plot of $s_{50}(t,x)$ ", default = False)):
                     if solution:
                         html(problem.say_fseries())
                         if rsel == rlist[2]:
@@ -133,7 +133,7 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
                 html(r"Where $f(x)$ has formula" + f.say_function())
 
             @interact
-            def _f(solution = Checkbox(label = "Show Solution", default = False), cplot = Checkbox(label = "Draw Contour Plot of $s_{50}(t,x)$ ", default = False)):
+            def _f(solution = Checkbox(label = "Show Solution", default = False), cplot = Checkbox(label = r"Draw Contour Plot of $s_{50}(t,x)$ ", default = False)):
                 if solution:
                     html(problem.say_fseries())
                     if rsel == rlist[2]:
@@ -199,7 +199,7 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
                 html(r"Where ${f}$ has formula ".format(f=latex(f)) + f.say_function())
 
             @interact
-            def _f(solution = Checkbox(label = "Show Solution", default = False), cplot = Checkbox(label = "Draw Contour Plot of $s_{50}(x,y)$ ", default = False)):
+            def _f(solution = Checkbox(label = "Show Solution", default = False), cplot = Checkbox(label = r"Draw Contour Plot of $s_{50}(x,y)$ ", default = False)):
                 if solution:
                     html(problem.say_fseries())
                     if rsel == rlist[2]:
