@@ -104,16 +104,16 @@ def say_solution(ftype, ltype, itype, rtype):
     if s > 0:
         f = f.slice(0,f.L())
     if s == 1 and rtype != 2 and itype == 1:
-        html(r"Since ${}$ is odd, we have $$a_n=0,\quad n\ge0$$".format(latex(f)))
+        html(r"Since ${}$ is odd, we have $$a_n=0,\quad n\ge0$$ ".format(latex(f)))
     if s != 1:
         html(f.say_integral(mult=mult, fsymbol="a_0"))
         html(f.say_integral(mult=mult, fsymbol="a_n", fmult = cosf))
     if s == 2 and rtype != 2 and itype == 1:
-        html(r"Since ${}$ is even, we have $$b_n=0,\quad n>0$$".format(latex(f)))
+        html(r"Since ${}$ is even, we have $$b_n=0,\quad n>0$$ ".format(latex(f)))
     if s != 2:
         html(f.say_integral(mult=mult, fsymbol="b_n", fmult = sinf))
     if rtype == 3:
         html("The {} is".format(rname))
         if s > 0:
             f = f.extension(s=s)
-        html("$$s_{{{}}}({})={}\sum_{{n=1}}^{{{}}} {}={}$$".format(latex(m),latex(f.fvar), cterm,latex(m), sterm,latex(f.partial_sum(m=m))))
+        html("$$s_{{{}}}({})={}\sum_{{n=1}}^{{{}}} {}={}$$ ".format(latex(m),latex(f.fvar), cterm,latex(m), sterm,latex(f.partial_sum(m=m))))
