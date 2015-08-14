@@ -93,14 +93,14 @@ class pc:
             d=2
         else:
             d=1
-        return d/self.L()*(sum([integrate(c[1]*sin(m*pi*self.fvar/self.L()),self.fvar,c[0][0],c[0][1]) for c in self.flist])-self.fvar+self.fvar).full_simplify().expand().subs_expr(sin(n*pi) == 0)
+        return d/self.L()*(sum([integrate(c[1]*sin(m*pi*self.fvar/self.L()),self.fvar,c[0][0],c[0][1]) for c in self.flist])-self.fvar+self.fvar).full_simplify().expand().substitute(sin(n*pi) == 0)
 
     def cos_coeff(self, m = n):
         if self.flist[0][0][0]==0:
             d=2
         else:
             d=1
-        return d/self.L()*(sum([integrate(c[1]*cos(m*pi*self.fvar/self.L()),self.fvar,c[0][0],c[0][1]) for c in self.flist])-self.fvar+self.fvar).full_simplify().expand().subs_expr(sin(n*pi) == 0)
+        return d/self.L()*(sum([integrate(c[1]*cos(m*pi*self.fvar/self.L()),self.fvar,c[0][0],c[0][1]) for c in self.flist])-self.fvar+self.fvar).full_simplify().expand().substitute(sin(n*pi) == 0)
     
     def partial_sum(self, m):
         x = self.fvar
@@ -148,7 +148,7 @@ class pc:
         else:
             say += latex_mult_sum([r"\int_{}^{}{}\,\mathrm d{}".format(blatex(c[0][0]),blatex(c[0][1]),blatex(c[1]),latex(self.fvar)) for c in fl_comp], mult=mult) + "$$"
             say += "$$=" + latex_mult_sum([r"\left[{}\right]_{}^{}".format(latex(c[1]),blatex(c[0][0]),blatex(c[0][1])) for c in [[c[0],SR(integrate(c[1],self.fvar)).full_simplify().expand()] for c in fl_comp]], mult=mult) + "$$"
-            say += r"$$={}$$".format(latex(mult*sum([SR(integrate(c[1],self.fvar,c[0][0],c[0][1])).subs_expr(sin(n*pi) == 0) for c in fl_comp])))
+            say += r"$$={}$$".format(latex(mult*sum([SR(integrate(c[1],self.fvar,c[0][0],c[0][1])).substitute(sin(n*pi) == 0) for c in fl_comp])))
         return say
 
     def extension(self, s = 0):
