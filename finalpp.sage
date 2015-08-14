@@ -51,7 +51,7 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
                     html(r"Where $f(x)$ has graph<br>")
                     show(f.plot_function())
                 else:
-                    html(r"Where $f(x)$ has formula" + f.say_function())
+                    print(r"Where $f(x)$ has formula" + f.say_function())
                     
                 @interact
                 def _f(solution = Checkbox(label = "Show Solution", default = False), cplot = Checkbox(label = r"Draw Contour Plot of $s_{50}(t,x)$ ", default = False)):
