@@ -48,10 +48,10 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
                 html(problem.say_eqs())
                 
                 if lsel == llist[1]:
-                    html("Where $f(x)$ has graph<br>")
+                    html(r"Where $f(x)$ has graph<br>")
                     show(f.plot_function())
                 else:
-                    html("Where $f(x)$ has formula" + f.say_function())
+                    html(r"Where $f(x)$ has formula" + f.say_function())
                     
                 @interact
                 def _f(solution = Checkbox(label = "Show Solution", default = False), cplot = Checkbox(label = "Draw Contour Plot of $s_{50}(t,x)$ ", default = False)):
@@ -79,10 +79,10 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
                 html(problem.say_eqs())
                 
                 if lsel == llist[1]:
-                    html("Where $f(x)$ has graph<br>")
+                    html(r"Where $f(x)$ has graph<br>")
                     show(f.plot_function())
                 else:
-                    html("Where $f(x)$ has formula" + f.say_function())
+                    html(r"Where $f(x)$ has formula" + f.say_function())
                     
                 @interact
                 def _f(solution = Checkbox(label = "Show Solution", default = False), cplot = Checkbox(label = "Draw Contour Plot of $s_{50}(t,x)$ ", default = False)):
@@ -127,10 +127,10 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
             html(problem.say_eqs())
 
             if lsel == llist[1]:
-                html("Where $f(x)$ has graph<br>")
+                html(r"Where $f(x)$ has graph<br>")
                 show(f.plot_function())
             else:
-                html("Where $f(x)$ has formula" + f.say_function())
+                html(r"Where $f(x)$ has formula" + f.say_function())
 
             @interact
             def _f(solution = Checkbox(label = "Show Solution", default = False), cplot = Checkbox(label = "Draw Contour Plot of $s_{50}(t,x)$ ", default = False)):
@@ -193,10 +193,10 @@ def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), re
             html(problem.say_eqs())
 
             if lsel == llist[1]:
-                html("Where ${f}$ has graph<br>".format(f=latex(f)))
+                html(r"Where ${f}$ has graph<br>".format(f=latex(f)))
                 show(f.plot_function())
             else:
-                html("Where ${f}$ has formula ".format(f=latex(f)) + f.say_function())
+                html(r"Where ${f}$ has formula ".format(f=latex(f)) + f.say_function())
 
             @interact
             def _f(solution = Checkbox(label = "Show Solution", default = False), cplot = Checkbox(label = "Draw Contour Plot of $s_{50}(x,y)$ ", default = False)):
