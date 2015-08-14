@@ -18,7 +18,7 @@ class HHE1d:
         LHS = latex(self.alpha2 * function(self.u + "_{xx}",t,x))
         say = r"$${LHS}={u}_{{t}}(t,x)$$ ".format(u=self.u,LHS=LHS)
         say += r"$${u}(t,x=0)={T0},\,{u}(t,x={L})={T1}$$ ".format(u = self.u, T0=latex(self.bc[0]), T1=latex(self.bc[1]), L=latex(self.f.L()))
-        say += r"$${u}(t=0,x)={f}$$".format(u = self.u, f = latex(self.f))
+        say += r"$${u}(t=0,x)={f}$$ ".format(u = self.u, f = latex(self.f))
         return say
     
     def say_fseries(self):
@@ -33,7 +33,7 @@ class HHE1d:
     
     def say_psum(self, m):
         say = r"We have "
-        say += r"$$s_{{{m}}}(t,x)=\sum_{{n=1}}^{{{m}}} b_n{Tn}{Xn}={sm}$$".format(m = latex(m), Tn = latex(self.Tn()), Xn = latex(self.Xn()), sm = latex(self.psum(m)))
+        say += r"$$s_{{{m}}}(t,x)=\sum_{{n=1}}^{{{m}}} b_n{Tn}{Xn}={sm}$$ ".format(m = latex(m), Tn = latex(self.Tn()), Xn = latex(self.Xn()), sm = latex(self.psum(m)))
         return say
     
     def plot_psum(self, m, tmax = 1):
@@ -57,7 +57,7 @@ class NHHE1d(HHE1d):
     
     def say_psum(self, m):
         say = r"We have "
-        say += r"$$s_{{{m}}}(t,x)=v(x)+\sum_{{n=1}}^{{{m}}} b_n{Tn}{Xn}={sm}$$".format(m = latex(m), Tn = latex(self.Tn()), Xn = latex(self.Xn()), sm = latex(self.psum(m)))
+        say += r"$$s_{{{m}}}(t,x)=v(x)+\sum_{{n=1}}^{{{m}}} b_n{Tn}{Xn}={sm}$$ ".format(m = latex(m), Tn = latex(self.Tn()), Xn = latex(self.Xn()), sm = latex(self.psum(m)))
         return say
     
 class IHE1d(HHE1d):
@@ -69,7 +69,7 @@ class IHE1d(HHE1d):
         LHS = latex(self.alpha2 * function(self.u + "_{xx}",t,x))
         say = r"$${LHS}={u}_{{t}}(t,x)$$ ".format(u=self.u,LHS=LHS)
         say += r"$${u}_x(t,x=0)={T0},\,{u}_x(t,x={L})={T1}$$ ".format(u = self.u, T0=latex(self.bc[0]), T1=latex(self.bc[1]), L=latex(self.f.L()))
-        say += r"$${u}(t=0,x)={f}$$".format(u = self.u, f = latex(self.f))
+        say += r"$${u}(t=0,x)={f}$$ ".format(u = self.u, f = latex(self.f))
         return say
     
     def say_fseries(self):
@@ -84,7 +84,7 @@ class IHE1d(HHE1d):
     
     def say_psum(self, m):
         say = r"We have "
-        say += r"$$s_{{{m}}}(t,x)=\frac12a_0+\sum_{{n=1}}^{{{m}}} a_n{Tn}{Xn}={sm}$$".format(m = latex(m), Tn = latex(self.Tn()), Xn = latex(self.Xn()), sm = latex(self.psum(m)))
+        say += r"$$s_{{{m}}}(t,x)=\frac12a_0+\sum_{{n=1}}^{{{m}}} a_n{Tn}{Xn}={sm}$$ ".format(m = latex(m), Tn = latex(self.Tn()), Xn = latex(self.Xn()), sm = latex(self.psum(m)))
         return say
     
 class ZVWE1d(HHE1d):
@@ -104,8 +104,8 @@ class ZVWE1d(HHE1d):
         LHS = latex(self.a^2 * function(self.u + "_{xx}",t,x))
         say = r"$${LHS}={u}_{{tt}}(t,x)$$ ".format(u=self.u,LHS=LHS)
         say += r"$${u}(t,x=0)=0,\,{u}(t,x={L})=0$$ ".format(u = self.u, L=latex(self.f.L()))
-        say += r"$${u}(t=0,x)={f}$$".format(u = self.u, f = latex(self.f))
-        say += r"$${u}_t(t=0,x)=0$$".format(u = self.u)
+        say += r"$${u}(t=0,x)={f}$$ ".format(u = self.u, f = latex(self.f))
+        say += r"$${u}_t(t=0,x)=0$$ ".format(u = self.u)
         return say
     
     def say_fseries(self):
@@ -131,8 +131,8 @@ class ZDWE1d(HHE1d):
         LHS = latex(self.a^2 * function(self.u + "_{xx}",t,x))
         say = r"$${LHS}={u}_{{tt}}(t,x)$$ ".format(u=self.u,LHS=LHS)
         say += r"$${u}(t,x=0)=0,\,{u}(t,x={L})=0$$ ".format(u = self.u, L=latex(self.f.L()))
-        say += r"$${u}(t=0,x)=0$$".format(u = self.u)
-        say += r"$${u}_t(t=0,x)={f}$$".format(u = self.u, f = latex(self.f))
+        say += r"$${u}(t=0,x)=0$$ ".format(u = self.u)
+        say += r"$${u}_t(t=0,x)={f}$$ ".format(u = self.u, f = latex(self.f))
         return say
     
     def say_fseries(self):
@@ -149,7 +149,7 @@ class ZDWE1d(HHE1d):
     
     def say_psum(self, m):
         say = r"We have "
-        say += r"$$s_{{{m}}}(t,x)=\sum_{{n=1}}^{{{m}}} k_n{Tn}{Xn}={sm}$$".format(m = latex(m), Tn = latex(self.Tn()), Xn = latex(self.Xn()), sm = latex(self.psum(m)))
+        say += r"$$s_{{{m}}}(t,x)=\sum_{{n=1}}^{{{m}}} k_n{Tn}{Xn}={sm}$$ ".format(m = latex(m), Tn = latex(self.Tn()), Xn = latex(self.Xn()), sm = latex(self.psum(m)))
         return say
 
 var('x,y')
@@ -237,7 +237,7 @@ class DP2d:
         Xnl = list(X)
         Xnl.insert(1,"_n")
         Xn = reduce(lambda x,y: x+y, Xnl)
-        say += r"$$ \lambda_n={lambdan},\,{Xn}={Fn},\,n=1,2,\dotsc $$".format(lambdan = latex((-1)^self.XisF()*n^2*pi^2/self.a()^2), Xn=Xn, Fn=latex(self.Fn()))
+        say += r"$$ \lambda_n={lambdan},\,{Xn}={Fn},\,n=1,2,\dotsc $$ ".format(lambdan = latex((-1)^self.XisF()*n^2*pi^2/self.a()^2), Xn=Xn, Fn=latex(self.Fn()))
         Ydd = insert_after_first(Y, "''")
         say += r"Substituting $\lambda=\lambda_n$ to the other ODE, we need to find a nonzero solution to "
         say += r"$${Ydd}-{npipa}{Y}=0,\,{BC}$$ ".format(Y=Y, Ydd=Ydd, npipa=latex(n^2*pi^2/self.a()^2),BC=bclist[2 * self.XisF()])
@@ -284,7 +284,7 @@ class NP2d(DP2d):
         bclist = [ "X(x={})=0".format(latex(k)) for k in [0,self.ab[0]]] + [ "Y(y={})=0".format(latex(k)) for k in [0,self.ab[1]]]
         bclist.pop(2*self.XisF() + self.v_is_y())
         bcplist = map(lambda x: insert_after_first(x, "'"), bclist)
-        say += r"$${}$$".format(reduce(lambda x,y: x + r",\," + y, bcplist))
+        say += r"$${}$$ ".format(reduce(lambda x,y: x + r",\," + y, bcplist))
         X = r"{X}({x})".format(X=latex(self.x()).capitalize(), x=latex(self.x()))
         Y = r"{Y}({y})".format(Y=latex(self.y()).capitalize(), y=latex(self.y()))
         say += r"Since there are two HBC's for ${X}$, we need the solution of the eigenfunction problem for ".format(X=X)
@@ -293,7 +293,7 @@ class NP2d(DP2d):
         Xnl = list(X)
         Xnl.insert(1,"_n")
         Xn = reduce(lambda x,y: x+y, Xnl)
-        say += r"$$ \lambda_n={lambdan},\,{Xn}={Fn},\,n=0,1,2,\dotsc $$".format(lambdan = latex((-1)^self.XisF()*n^2*pi^2/self.a()^2), Xn=Xn, Fn=latex(self.Fn()))
+        say += r"$$ \lambda_n={lambdan},\,{Xn}={Fn},\,n=0,1,2,\dotsc $$ ".format(lambdan = latex((-1)^self.XisF()*n^2*pi^2/self.a()^2), Xn=Xn, Fn=latex(self.Fn()))
         Ydd = insert_after_first(Y, "''")
         say += r"Substituting $\lambda=\lambda_n$ to the other ODE, we need to find a nonzero solution to "
         say += r"$${Ydd}-{npipa}{Y}=0,\,{BC}$$ ".format(Y=Y, Ydd=Ydd, npipa=latex(n^2*pi^2/self.a()^2),BC=insert_after_first(bclist[2 * self.XisF()],"'"))
