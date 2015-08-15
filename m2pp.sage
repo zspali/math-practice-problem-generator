@@ -84,7 +84,7 @@ def _f(psel = Selector(plist, label = 'Problem Topic:', selector_type='button'))
         @interact
         def _f(psel = Selector(p2list, label = "PDE type:", selector_type = "button"), regen = Button(text="Regenerate Problem", default=True, value=True, label = "")):
             if psel == p2list[0]:
-                psel = choice(plist[1:])
+                psel = choice(p2list[1:])
             if psel == p2list[1]:
 
                 blist = ["Random", "Temperatures fixed at ends", "Insulated ends"]
