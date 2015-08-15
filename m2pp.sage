@@ -7,6 +7,10 @@ max_period = 3
 
 var('a0,a_n,b_n')
 
+load('https://github.com/zspali/math-practice-problem-generator/raw/master/pc.sage')
+load('https://github.com/zspali/math-practice-problem-generator/raw/master/fourier-problems.sage')
+load('https://github.com/zspali/math-practice-problem-generator/raw/master/pdes-with-fourier.sage')
+
 flist = ["Random", "Piecewise Linear", "Other"]
 llist = ["Random", "From Graph", "From Formula"]
 ilist = ["Random", "$[-L,L]$", "$[0,L]$"]
