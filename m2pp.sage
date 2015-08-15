@@ -15,7 +15,7 @@ flist = ["Random", "Piecewise Linear", "Other"]
 llist = ["Random", "From Graph", "From Formula"]
 ilist = ["Random", "$[-L,L]$", "$[0,L]$"]
 rlist = ["Random", "Coefficients", "Series", "Partial Sum"]
-plist = ["Fourier", "Inhomogeneous Equation"]
+plist = ["Fourier", "PDE"]
 elist = ["Random", "Real Distinct", "Complex Conjugate Pair", "Repeated"]
 
 @interact
@@ -72,17 +72,212 @@ def _f(psel = Selector(plist, label = 'Problem Topic:', selector_type='button'))
                             else:
                                 show(plot(f.plot_function(thickness=2)+f.plot_psum(plot_m,thickness=2)))
     else:
+        min_m = 3
+        max_m = 5
+
+        max_step = 4
+        max_abs = 4
+
+        plist = ["Random", "Heat Equation", "Wave Equation", "Laplace Equation"]
+
         @interact
-        def _f(esel = Selector(elist, label = 'Eigenvalues:', selector_type='button'), regen2 = Button(text="Regenerate Problem", default=True, value=True, label = "")):
-            var('alpha,t,u,x,y,x1,x2,c1,c2,y1,y2,s');x1f=function('x1f',t); x2f=function('x2f',t); cv = vector([c1,c2]); yx = vector([y1,y2])
-            etype = elist.index(esel)
-            A = HDE2d(generate_mx(evtype = etype))
-            A = IHDE2d(A.A, A.generate_g())
-            html(r"Find a particular solution of the inhomogeneous equation $$\mathbf x'(t)={A}\mathbf x(t)+{g}$$".format(A=latex(A.A), g=latex(A.g.column())))
-            @interact
-            def _f(solution = Checkbox(label = "Show Solution", default = False)):
-                if solution:
-                    if A.disc() < 0:
-                        html(A.say_u())
+        def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), regen = Button(text="Regenerate Problem", default=True, value=True, label = "")):
+            if psel == plist[0]:
+                psel = choice(plist[1:])
+            if psel == plist[1]:
+
+                blist = ["Random", "Temperatures fixed at ends", "Insulated ends"]
+                rlist = ["Random", "Formal Solution", "Partial Sum"]
+                llist = ["Random", "From Graph", "From Formula"]
+
+                @interact
+                def _f(bsel = Selector(blist, label = "BC type:", selector_type = "button"), rsel = Selector(rlist, label = "problem type:", selector_type = "button"), lsel = Selector(llist, label = "NHBC represented by:", selector_type = "button"), regen1 = Button(text="Regenerate Problem", default=True, value=True, label = "")):
+                    if bsel == blist[0]:
+                        bsel = choice(blist[1:])
+                    if rsel == rlist[0]:
+                        rsel = choice(rlist[1:])
+                    if lsel == llist[0]:
+                        lsel = choice(llist[1:])
+
+                    f = generate_pc()
+                    alpha2 = 2^randint(-3,3)
+
+                    bc = [randint(-max_abs,max_abs), randint(-max_abs,max_abs)]
+
+                    if bsel == blist[1]:
+
+
+                        if bc == [0,0]:
+                            problem = HHE1d(f = f, bc = bc, alpha2 = alpha2)
+                        else:
+                            problem = NHHE1d(f = f, bc = bc, alpha2 = alpha2)
+
+                        if rsel == rlist[1]:
+                            html(r"Find the formal solution to the problem")
+
+                        else:
+                            m = randint(min_m, max_m)
+                            html(r"Find the partial sum $s_{{{m}}}(t,x)$ to the problem".format(m = latex(m)))
+
+                        html(problem.say_eqs())
+
+                        if lsel == llist[1]:
+                            html(r"Where $f(x)$ has graph<br>")
+                            show(f.plot_function())
+                        else:
+                            html(r"Where $f(x)$ has formula" + f.say_function())
+
+                        @interact
+                        def _f(solution = Checkbox(label = "Show Solution", default = False), cplot = Checkbox(label = r"Draw Contour Plot of $s_{50}(t,x)$ ", default = False)):
+                            if solution:
+                                html(problem.say_fseries())
+                                if rsel == rlist[2]:
+                                    html(problem.say_psum(m))
+
+                            if cplot:
+                                show(problem.plot_psum(50))
+
+                    if bsel == blist[2]:
+
+                        bc = [0,0]
+
+                        problem = IHE1d(f = f, alpha2 = alpha2)
+
+                        if rsel == rlist[1]:
+                            html(r"Find the formal solution to the problem")
+
+                        else:
+                            m = randint(min_m, max_m)
+                            html(r"Find the partial sum $s_{{{m}}}(t,x)$ to the problem".format(m = latex(m)))
+
+                        html(problem.say_eqs())
+
+                        if lsel == llist[1]:
+                            html(r"Where $f(x)$ has graph<br>")
+                            show(f.plot_function())
+                        else:
+                            html(r"Where $f(x)$ has formula" + f.say_function())
+
+                        @interact
+                        def _f(solution = Checkbox(label = "Show Solution", default = False), cplot = Checkbox(label = r"Draw Contour Plot of $s_{50}(t,x)$ ", default = False)):
+                            if solution:
+                                html(problem.say_fseries())
+                                if rsel == rlist[2]:
+                                    html(problem.say_psum(m))
+
+                            if cplot:
+                                show(problem.plot_psum(50))
+
+            if psel == plist[2]:
+
+                blist = ["Random", "Zero Initial Velocity", "Zero Initial Displacement"]
+                rlist = ["Random", "Formal Solution", "Partial Sum"]
+                llist = ["Random", "From Graph", "From Formula"]
+
+                @interact
+                def _f(bsel = Selector(blist, label = "BC type:", selector_type = "button"), rsel = Selector(rlist, label = "problem type:", selector_type = "button"), lsel = Selector(llist, label = "NHBC represented by:", selector_type = "button"), regen1 = Button(text="Regenerate Problem", default=True, value=True, label = "")):
+                    if bsel == blist[0]:
+                        bsel = choice(blist[1:])
+                    if rsel == rlist[0]:
+                        rsel = choice(rlist[1:])
+                    if lsel == llist[0]:
+                        lsel = choice(llist[1:])
+
+                    f = generate_pc()
+                    a = 2^randint(-3,3)
+
+                    if bsel == blist[1]:
+                        problem = ZVWE1d(f = f, a = a)
                     else:
-                        html(A.say_y())
+                        problem = ZDWE1d(f = f, a = a)
+
+                    if rsel == rlist[1]:
+                        html(r"Find the formal solution to the problem")
+
+                    else:
+                        m = randint(min_m, max_m)
+                        html(r"Find the partial sum $s_{{{m}}}(t,x)$ to the problem".format(m = latex(m)))
+
+                    html(problem.say_eqs())
+
+                    if lsel == llist[1]:
+                        html(r"Where $f(x)$ has graph<br>")
+                        show(f.plot_function())
+                    else:
+                        html(r"Where $f(x)$ has formula" + f.say_function())
+
+                    @interact
+                    def _f(solution = Checkbox(label = "Show Solution", default = False), cplot = Checkbox(label = r"Draw Contour Plot of $s_{50}(t,x)$ ", default = False)):
+                        if solution:
+                            html(problem.say_fseries())
+                            if rsel == rlist[2]:
+                                html(problem.say_psum(m))
+
+                        if cplot:
+                            show(problem.plot_psum(50))
+
+            if psel == plist[3]:
+
+                blist = ["Random", "Dirichlet Problem", "Neumann Problem"]
+                rlist = ["Random", "Formal Solution", "Partial Sum"]
+                llist = ["Random", "From Graph", "From Formula"]
+
+                @interact
+                def _f(bsel = Selector(blist, label = "BC type:", selector_type = "button"), rsel = Selector(rlist, label = "problem type:", selector_type = "button"), lsel = Selector(llist, label = "NHBC represented by:", selector_type = "button"), regen1 = Button(text="Regenerate Problem", default=True, value=True, label = "")):
+                    if bsel == blist[0]:
+                        bsel = choice(blist[1:])
+                    if rsel == rlist[0]:
+                        rsel = choice(rlist[1:])
+                    if lsel == llist[0]:
+                        lsel = choice(llist[1:])
+
+                    xin = randint(0,1)
+                    vari = [x,y][xin]
+
+                    zero_int = bool( bsel == blist[2] )
+                    f = generate_pc(vari=vari, zero_int = zero_int)
+
+                    a = f.L()
+                    b = randint(1,max_abs)
+
+                    if randint(0,1) == 0:
+                        bc = [[0,f]]
+                    else:
+                        bc = [[f,0]]
+
+                    bc.insert(xin,[0,0])
+
+                    if xin == 0:
+                        ab = [a,b]
+                    else:
+                        ab = [b,a]
+
+                    if bsel == blist[1]:
+                        problem = DP2d(bc = bc, ab = ab)
+                    else:
+                        problem = NP2d(bc = bc, ab = ab)
+
+                    if rsel == rlist[1]:
+                        html(r"Find the formal solution to the problem")
+
+                    else:
+                        m = randint(min_m, max_m)
+                        html(r"Find the partial sum $s_{{{m}}}(x,y)$ to the problem".format(m = latex(m)))
+
+                    html(problem.say_eqs())
+
+                    if lsel == llist[1]:
+                        html(r"Where ${f}$ has graph<br>".format(f=latex(f)))
+                        show(f.plot_function())
+                    else:
+                        html(r"Where ${f}$ has formula ".format(f=latex(f)) + f.say_function())
+
+                    @interact
+                    def _f(solution = Checkbox(label = "Show Solution", default = False), cplot = Checkbox(label = r"Draw Contour Plot of $s_{50}(x,y)$ ", default = False)):
+                        if solution:
+                            html(problem.say_fseries())
+                            if rsel == rlist[2]:
+                                html(problem.say_psum(m))
+
+                        if cplot:
+                            show(problem.plot_psum(50))      
