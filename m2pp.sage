@@ -11,15 +11,16 @@ load('https://github.com/zspali/math-practice-problem-generator/raw/master/pc.sa
 load('https://github.com/zspali/math-practice-problem-generator/raw/master/fourier-problems.sage')
 load('https://github.com/zspali/math-practice-problem-generator/raw/master/pdes-with-fourier.sage')
 
-flist = ["Random", "Piecewise Linear", "Other"]
-llist = ["Random", "From Graph", "From Formula"]
-ilist = ["Random", "$[-L,L]$", "$[0,L]$"]
-rlist = ["Random", "Coefficients", "Series", "Partial Sum"]
 plist = ["Fourier", "PDE"]
-elist = ["Random", "Real Distinct", "Complex Conjugate Pair", "Repeated"]
+
 
 @interact
 def _f(psel = Selector(plist, label = 'Problem Topic:', selector_type='button')):
+    flist = ["Random", "Piecewise Linear", "Other"]
+    llist = ["Random", "From Graph", "From Formula"]
+    ilist = ["Random", "$[-L,L]$", "$[0,L]$"]
+    rlist = ["Random", "Coefficients", "Series", "Partial Sum"]
+
     if psel == plist[0]:
         @interact
         def _f(fsel = Selector(flist, label = 'Function type:', selector_type = 'button'), isel = Selector(ilist, label = 'Interval:', selector_type = 'button'), rsel = Selector(rlist, label = 'Question:', selector_type = 'button'), regen = Button(text="Regenerate Problem", default=True, value=True, label = "")):
@@ -78,13 +79,13 @@ def _f(psel = Selector(plist, label = 'Problem Topic:', selector_type='button'))
         max_step = 4
         max_abs = 4
 
-        plist = ["Random", "Heat Equation", "Wave Equation", "Laplace Equation"]
+        p2list = ["Random", "Heat Equation", "Wave Equation", "Laplace Equation"]
 
         @interact
-        def _f(psel = Selector(plist, label = "PDE type:", selector_type = "button"), regen = Button(text="Regenerate Problem", default=True, value=True, label = "")):
-            if psel == plist[0]:
+        def _f(psel = Selector(p2list, label = "PDE type:", selector_type = "button"), regen = Button(text="Regenerate Problem", default=True, value=True, label = "")):
+            if psel == p2list[0]:
                 psel = choice(plist[1:])
-            if psel == plist[1]:
+            if psel == p2list[1]:
 
                 blist = ["Random", "Temperatures fixed at ends", "Insulated ends"]
                 rlist = ["Random", "Formal Solution", "Partial Sum"]
@@ -168,7 +169,7 @@ def _f(psel = Selector(plist, label = 'Problem Topic:', selector_type='button'))
                             if cplot:
                                 show(problem.plot_psum(50))
 
-            if psel == plist[2]:
+            if psel == p2list[2]:
 
                 blist = ["Random", "Zero Initial Velocity", "Zero Initial Displacement"]
                 rlist = ["Random", "Formal Solution", "Partial Sum"]
@@ -216,7 +217,7 @@ def _f(psel = Selector(plist, label = 'Problem Topic:', selector_type='button'))
                         if cplot:
                             show(problem.plot_psum(50))
 
-            if psel == plist[3]:
+            if psel == p2list[3]:
 
                 blist = ["Random", "Dirichlet Problem", "Neumann Problem"]
                 rlist = ["Random", "Formal Solution", "Partial Sum"]
